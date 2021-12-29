@@ -1,0 +1,10 @@
+?start: _NEWLINE* tree
+
+tree: NAME _NEWLINE [_INDENT tree+ _DEDENT]
+
+%import common.CNAME -> NAME
+%import common.WS_INLINE
+%declare _INDENT _DEDENT
+%ignore WS_INLINE
+
+_NEWLINE: /(\r?\n[\t ]*)+/
