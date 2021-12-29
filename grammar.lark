@@ -1,10 +1,43 @@
-?start: _NEWLINE* tree
+?start: _NEWLINE* program
 
-tree: NAME _NEWLINE [_INDENT tree+ _DEDENT]
+program: function_def+
+function_def: "def" NAME _NEWLINE _INDENT stmt+ _DEDENT
+stmt: line_stmt _NEWLINE | multiline_stmt _NEWLINE _INDENT stmt+ _DEDENT
 
-%import common.CNAME -> NAME
-%import common.WS_INLINE
+?line_stmt: funccall | thing
+?multiline_stmt: DO_STMT
+
+funccall: NAME "(" thing ")"
+
+DO_STMT: "do"
+
+
+
+
+?thing: NAME | string | number
+
+// other terminals
+
+_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
+
+%ignore /[\t \f]+/  // WS
+%ignore /\\[\t \f]*\r?\n/   // LINE_CONT
+%ignore COMMENT
 %declare _INDENT _DEDENT
-%ignore WS_INLINE
 
-_NEWLINE: /(\r?\n[\t ]*)+/
+// main terminals
+
+NAME: /[a-zA-Z_]\w*/
+COMMENT: /#[^\n]*/
+
+string: STRING | LONG_STRING
+STRING : /("(?!"").*?(?<!\\)(\\\\)*?"|'(?!'').*?(?<!\\)(\\\\)*?'|`(?!``).*?(?<!\\)(\\\\)*?`)/i
+LONG_STRING: /(""".*?(?<!\\)(\\\\)*?"""|'''.*?(?<!\\)(\\\\)*?'''|```.*?(?<!\\)(\\\\)*?```)/is
+
+number: DEC_NUMBER | HEX_NUMBER | BIN_NUMBER | OCT_NUMBER | FLOAT_NUMBER | IMAG_NUMBER
+DEC_NUMBER: /0|[1-9][\d_]*/i
+HEX_NUMBER.2: /0x[\da-f]*/i
+OCT_NUMBER.2: /0o[0-7]*/i
+BIN_NUMBER.2 : /0b[0-1]*/i
+FLOAT_NUMBER.2: /((\d+\.[\d_]*|\.[\d_]+)([Ee][-+]?\d+)?|\d+([Ee][-+]?\d+))/
+IMAG_NUMBER.2: /\d+[JjIi]/ | FLOAT_NUMBER /[JjIi]/
