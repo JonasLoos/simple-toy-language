@@ -40,7 +40,7 @@ def interpret(program : Tree) -> None:
 
 
 def run_program(program):
-    from stdlib import asdf_print, asdf_input, asdf_add, asdf_sub, asdf_mul, asdf_div
+    from stdlib import asdf_print, asdf_input, asdf_add, asdf_sub, asdf_mul, asdf_div, asdf_length
     global_names : dict[str, Object] = {
         'print': Function('print', asdf_print),
         'input': Function('input', asdf_input),
@@ -48,6 +48,7 @@ def run_program(program):
         'sub': Function('sub', asdf_sub),
         'mul': Function('mul', asdf_mul),
         'div': Function('div', asdf_div),
+        'length': Function('length', asdf_length),
     }
 
     assert program.data == 'program'
@@ -143,8 +144,22 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
             else:
                 raise Fail(f'use of undefined name: {thing}')
         elif thing.type == "STRING":
+            # if it's a format string, format it
+            if thing[0] == '"':
+                try:
+                    return Value(thing[1:-1].format(**get_values(names)))
+                except KeyError as err:
+                    raise Fail(f'Could not find variable {err} used in format string {thing}')
+            # otherwise return just the content
             return Value(thing[1:-1])
         elif thing.type == "LONG_STRING":
+            # if it's a format string, format it
+            if thing[0] == '"':
+                try:
+                    return Value(thing[3:-3].format(**get_values(names)))
+                except KeyError as err:
+                    raise Fail(f'Could not find variable {err} used in format string {thing}')
+            # otherwise return just the content
             return Value(thing[3:-3])
         elif thing.type == "DEC_NUMBER":
             return Value(int(thing))
@@ -156,6 +171,10 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
         raise Fail(f'unknown line_stmt: {line_stmt}')
 
 
+
+def get_values(names : dict[str, Object]) -> dict[str, Any]:
+    '''filter names dict for Values and extract their internal value'''
+    return {key: value.value for key, value in names.items() if isinstance(value, Value)}
 
 
 def print_tree(tree : Tree, indent : int = 0) -> None:

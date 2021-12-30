@@ -13,5 +13,6 @@ features:
 * assignments: `name = value`
 * basic mathematical operations: `add`, `sub`, `mul`, `div`
 * IO operations: `input`, `print`
+* string operations: `length`, `"format string with {variable}."`
 * multiline statements: `do`
 * use `_` to get the result of the previous operation

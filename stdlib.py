@@ -36,7 +36,7 @@ def asdf_input() -> Value:
 
 def asdf_add(*args : Value) -> Value:
     if len(args) < 2:
-        raise Fail('add: need at least two arguments')
+        raise Fail(f'add: need at least two arguments, got {len(args)}')
     try:
         return Value(sum(arg.value for arg in args))
     except Exception as err:
@@ -44,7 +44,7 @@ def asdf_add(*args : Value) -> Value:
 
 def asdf_sub(*args : Value) -> Value:
     if len(args) < 2:
-        raise Fail('sub: need at least two arguments')
+        raise Fail(f'sub: need at least two arguments, got {len(args)}')
     try:
         return Value(args[0].value - sum(arg.value for arg in args[1:]))
     except Exception as err:
@@ -52,7 +52,7 @@ def asdf_sub(*args : Value) -> Value:
 
 def asdf_mul(*args : Value) -> Value:
     if len(args) < 2:
-        raise Fail('mul: need at least two arguments')
+        raise Fail(f'mul: need at least two arguments, got {len(args)}')
     try:
         import math
         return Value(math.prod(arg.value for arg in args))
@@ -61,9 +61,15 @@ def asdf_mul(*args : Value) -> Value:
 
 def asdf_div(*args : Value) -> Value:
     if len(args) < 2:
-        raise Fail('div: need at least two arguments')
+        raise Fail(f'div: need at least two arguments, got {len(args)}')
     try:
         import math
         return Value(args[0].value / math.prod(arg.value for arg in args[1:]))
     except Exception as err:
         raise Fail(err)
+
+def asdf_length(x : Value) -> Value:
+    if hasattr(x.value, '__len__'):
+        return Value(len(x.value))
+    else:
+        raise Fail(f'cannot determine length of {x}')
