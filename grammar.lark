@@ -1,8 +1,16 @@
 ?start: _NEWLINE* program
 
+// helpers
+
+comma_list{item}: [item ("," item)* [","]]
+
+// function definition
+
 program: function_def+
 function_def: "def" NAME "(" comma_list{NAME} ")" _NEWLINE _INDENT stmt+ _DEDENT
 ?stmt: line_stmt _NEWLINE | multiline_stmt
+
+// statements
 
 line_stmt: funccall | assignment | thing
 multiline_stmt: do_stmt _NEWLINE _INDENT stmt+ _DEDENT
@@ -12,13 +20,9 @@ assignment: NAME "=" line_stmt
 
 do_stmt: "do"
 
-
-comma_list{item}: [item ("," item)* [","]]
-
-
 thing: NAME | string | number
 
-// other terminals
+// special terminals and rules
 
 _NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
 
@@ -27,7 +31,7 @@ _NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
 %ignore COMMENT
 %declare _INDENT _DEDENT
 
-// main terminals
+// common terminals
 
 NAME: /[a-zA-Z_]\w*/
 COMMENT: /#[^\n]*/

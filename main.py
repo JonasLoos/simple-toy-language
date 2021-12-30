@@ -46,5 +46,6 @@ if __name__ == '__main__':
         exit()
     input_text = open(sys.argv[1]).read()
     # print(parse(input_text).pretty())
+    # print('-'*50)
     from interpreter import interpret
     interpret(parse(input_text))

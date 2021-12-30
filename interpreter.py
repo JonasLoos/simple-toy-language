@@ -28,18 +28,18 @@ class DefinedFunction(Function):
 
 
 def interpret(program : Tree) -> None:
-    # debug
-    print_tree(program)
-    print('-'*50)
-
+    '''main entry point - interpret the given program '''
+    # try to run the program
     try:
         run_program(program)
+    # print an error message if it fails
     except Fail as err:
         import sys
         print("fail:", err, file=sys.stderr)
 
 
-def run_program(program):
+def run_program(program : Tree):
+    '''parse the function definitions and run `main`'''
     from stdlib import asdf_print, asdf_input, asdf_add, asdf_sub, asdf_mul, asdf_div, asdf_length
     global_names : dict[str, Object] = {
         'print': Function('print', asdf_print),
@@ -77,6 +77,7 @@ def run_program(program):
 
 
 def run_body(body : list, names : dict[str, Object]) -> Value:
+    '''run the statements in the body of a function or multiline statement'''
     if "_" not in names:
         names["_"] = Value(None)
     for stmt in body:
@@ -101,6 +102,8 @@ def run_body(body : list, names : dict[str, Object]) -> Value:
 
 
 def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
+    '''run a single line statement (includes also parts of a line that could stand alone)'''
+    # function call
     if line_stmt.data == 'funccall':
         name, arguments = line_stmt.children
         assert isinstance(name, Token)
@@ -121,6 +124,7 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
                 raise Fail(f'call of {type(func)} object: {name}')
         else:
             raise Fail(f'call of undefined function: {name}')
+    # variable assignment
     elif line_stmt.data == 'assignment':
         name, value = line_stmt.children
         assert isinstance(name, Token)
@@ -130,6 +134,7 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
         assert isinstance(val, Tree)
         names[name] = result = run_line_stmt(val, names)
         return result
+    # thing / value
     elif line_stmt.data == 'thing':
         thing, *_ = line_stmt.children
         assert len(_) == 0
@@ -167,20 +172,13 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
             raise Fail(f'{thing.type} is not implemented yet')
         else:
             raise Fail(f'unknown thing type: {thing.type}')
+    # error
     else:
-        raise Fail(f'unknown line_stmt: {line_stmt}')
+        # if grammar and interpreter are correct, this point should never be reached
+        raise Exception(f'unknown line_stmt: {line_stmt}')
 
 
 
 def get_values(names : dict[str, Object]) -> dict[str, Any]:
     '''filter names dict for Values and extract their internal value'''
     return {key: value.value for key, value in names.items() if isinstance(value, Value)}
-
-
-def print_tree(tree : Tree, indent : int = 0) -> None:
-    print("  " * indent + tree.data)
-    for child in tree.children:
-        if isinstance(child, Tree):
-            print_tree(child, indent + 1)
-        else:
-            print("  " * (indent + 1) + child)
