@@ -1,10 +1,12 @@
 
 
 def main()
-    print(mul(sub(10,add(mul(3,2,2),40)),sub(0,1)))
-    print3(add(1,2,3))
+    minus1 = sub(0,1)
+    print(mul(sub(10,add(mul(3,2,2),40)),minus1))
+    result = _
+    print3(add(result, _))
 
-def print3(msg)
-    print(msg)
-    print(msg)
-    print(msg)
+def print3(value)
+    print(value)
+    print(mul(_,value))
+    print(mul(_,value))

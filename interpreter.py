@@ -114,6 +114,15 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
                 raise Fail(f'call of {type(func)} object: {name}')
         else:
             raise Fail(f'call of undefined function: {name}')
+    elif line_stmt.data == 'assignment':
+        name, value = line_stmt.children
+        assert isinstance(name, Token)
+        assert isinstance(value, Tree)
+        val, *_ = value.children
+        assert len(_) == 0
+        assert isinstance(val, Tree)
+        names[name] = result = run_line_stmt(val, names)
+        return result
     elif line_stmt.data == 'thing':
         thing, *_ = line_stmt.children
         assert len(_) == 0
