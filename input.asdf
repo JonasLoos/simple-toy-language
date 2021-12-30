@@ -1,9 +1,10 @@
 
 
-def main
-    "asdf"
-    print(_)
-    asdf(123)
+def main()
+    print3(123.2)
+    print3('asdf')
 
-def asdf
-    """asdf"""
+def print3(msg)
+    print(msg)
+    print(msg)
+    print(msg)

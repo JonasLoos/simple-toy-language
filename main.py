@@ -2,6 +2,7 @@ from lark.exceptions import UnexpectedToken
 from lark import Lark
 from lark.indenter import Indenter
 import sys
+from lark.tree import Tree
 
 
 class TreeIndenter(Indenter):
@@ -13,13 +14,13 @@ class TreeIndenter(Indenter):
     tab_len : int = 8
 
 
-def main(input_text : str) -> str:
+def parse(input_text : str) -> Tree:
     # dont fail when no newline at the end
     input_text += '\n'
     
     # parse and print
     try:
-        return parser.parse(input_text).pretty()
+        return parser.parse(input_text)
     except UnexpectedToken as error:
         indent = '\n    '
         nl = '\n'
@@ -44,7 +45,6 @@ if __name__ == '__main__':
         print(f'USAGE: {sys.argv[0]} FILE')
         exit()
     input_text = open(sys.argv[1]).read()
-    try:
-        print(main(input_text))
-    except Exception as e:
-        print(e)
+    # print(parse(input_text).pretty())
+    from interpreter import interpret
+    interpret(parse(input_text))

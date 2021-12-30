@@ -1,20 +1,21 @@
 ?start: _NEWLINE* program
 
 program: function_def+
-function_def: "def" NAME _NEWLINE _INDENT stmt+ _DEDENT
-stmt: line_stmt _NEWLINE | multiline_stmt _NEWLINE _INDENT stmt+ _DEDENT
+function_def: "def" NAME "(" comma_list{NAME} ")" _NEWLINE _INDENT stmt+ _DEDENT
+?stmt: line_stmt _NEWLINE | multiline_stmt
 
-?line_stmt: funccall | thing
-?multiline_stmt: DO_STMT
+line_stmt: funccall | thing
+multiline_stmt: do_stmt _NEWLINE _INDENT stmt+ _DEDENT
 
-funccall: NAME "(" thing ")"
+funccall: NAME "(" comma_list{line_stmt} ")"
 
-DO_STMT: "do"
-
-
+do_stmt: "do"
 
 
-?thing: NAME | string | number
+comma_list{item}: [item ("," item)* [","]]
+
+
+thing: NAME | string | number
 
 // other terminals
 
@@ -30,11 +31,11 @@ _NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
 NAME: /[a-zA-Z_]\w*/
 COMMENT: /#[^\n]*/
 
-string: STRING | LONG_STRING
+?string: STRING | LONG_STRING
 STRING : /("(?!"").*?(?<!\\)(\\\\)*?"|'(?!'').*?(?<!\\)(\\\\)*?'|`(?!``).*?(?<!\\)(\\\\)*?`)/i
 LONG_STRING: /(""".*?(?<!\\)(\\\\)*?"""|'''.*?(?<!\\)(\\\\)*?'''|```.*?(?<!\\)(\\\\)*?```)/is
 
-number: DEC_NUMBER | HEX_NUMBER | BIN_NUMBER | OCT_NUMBER | FLOAT_NUMBER | IMAG_NUMBER
+?number: DEC_NUMBER | HEX_NUMBER | BIN_NUMBER | OCT_NUMBER | FLOAT_NUMBER | IMAG_NUMBER
 DEC_NUMBER: /0|[1-9][\d_]*/i
 HEX_NUMBER.2: /0x[\da-f]*/i
 OCT_NUMBER.2: /0o[0-7]*/i
