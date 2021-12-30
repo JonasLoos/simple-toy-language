@@ -57,6 +57,8 @@ def run_program(program : Tree):
             assert isinstance(arg, Token)
             assert arg.type == 'NAME'
             args += arg,
+        if name in std_names:
+            raise Fail(f'Cannot overwrite a predefined function or value: {name}')
         global_names[name] = DefinedFunction(name, args, body, global_names)
 
     # run main function
@@ -163,7 +165,10 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
     elif line_stmt.data == 'assignment':
         name, value = line_stmt.children
         assert isinstance(name, Token)
+        assert name.type == 'NAME'
         assert isinstance(value, Tree)
+        if name in std_names:
+            raise Fail(f'Cannot overwrite a predefined function or value: {name}')
         names[name] = result = run_line_stmt(value, names)
         return result
     # thing / value
