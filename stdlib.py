@@ -1,4 +1,7 @@
-from typing import Callable
+from typing import Any, Callable, Union
+
+from lark.lexer import Token
+from lark.tree import Tree
 
 
 class Object:
@@ -22,7 +25,9 @@ class Function(Object):
 
 class Fail(Exception):
     """wrapper class to symbolize errors caused by the interpreted source code"""
-    pass
+    def __init__(self, msg : Any, item : Union[Tree, Token] = None):
+        # TODO: print line, column, ...
+        super().__init__("[TODO] " + msg)
 
 
 
@@ -73,3 +78,52 @@ def asdf_length(x : Value) -> Value:
         return Value(len(x.value))
     else:
         raise Fail(f'cannot determine length of {x}')
+
+def asdf_eq(a : Value, b : Value) -> Value:
+    try:
+        return Value(a.value == b.value)
+    except TypeError:
+        raise Fail(f'`eq` between {type(a.value)} and {type(b.value)} is not supported')
+
+def asdf_lt(a : Value, b : Value) -> Value:
+    try:
+        return Value(a.value < b.value)
+    except TypeError:
+        raise Fail(f'`lt` between {type(a.value)} and {type(b.value)} is not supported')
+
+def asdf_leq(a : Value, b : Value) -> Value:
+    try:
+        return Value(a.value <= b.value)
+    except TypeError:
+        raise Fail(f'l`leq` between {type(a.value)} and {type(b.value)} is not supported')
+
+def asdf_gt(a : Value, b : Value) -> Value:
+    try:
+        return Value(a.value > b.value)
+    except TypeError:
+        raise Fail(f'`gt` between {type(a.value)} and {type(b.value)} is not supported')
+
+def asdf_geq(a : Value, b : Value) -> Value:
+    try:
+        return Value(a.value >= b.value)
+    except TypeError:
+        raise Fail(f'g`geq` between {type(a.value)} and {type(b.value)} is not supported')
+
+
+std_names : dict[str, Object] = {
+    'print': Function('print', asdf_print),
+    'input': Function('input', asdf_input),
+    'add': Function('add', asdf_add),
+    'sub': Function('sub', asdf_sub),
+    'mul': Function('mul', asdf_mul),
+    'div': Function('div', asdf_div),
+    'length': Function('length', asdf_length),
+    'eq': Function('eq', asdf_eq),
+    'lt': Function('lt', asdf_lt),
+    'leq': Function('leq', asdf_leq),
+    'gt': Function('gt', asdf_gt),
+    'geq': Function('geq', asdf_geq),
+    'true': Value(True),
+    'false': Value(False),
+    '_': Value(None),
+}

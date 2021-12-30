@@ -1,19 +1,25 @@
-
-
 def main()
-    minus1 = sub(0,1)
-    print(mul(sub(10,add(mul(3,2,2),40)),minus1))
-    result = _
-    print3(add(result, _))
+    print('factorial(5) =', factorial(5))
     ask('what does the fox say?')
 
-def print3(value)
-    print(value)
-    do
-        print(mul(_,value))
-        print(mul(_,value))
+def factorial(n)
+    # calculate the factorial of n
+    if lt(n, 2)
+        1
+    else
+        mul(factorial(sub(n,1)), n)
+
 
 def ask(question)
+    # ask a hard question
     print("Please answer the question: {_}")
-    length(answer = input())
+    l = length(answer = input())
+
+    # analyze the answer
     print("Your answer is `{answer}`. It is {_} characters long.")
+    if eq(l, 0)
+        print('This is not a real answer, but might still be true!')
+    elif lt(l, 12)
+        print('Thank you')
+    else
+        print("This is a bit long, isn't it?")

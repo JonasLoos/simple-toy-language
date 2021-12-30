@@ -7,13 +7,18 @@ comma_list{item}: [item ("," item)* [","]]
 // function definition
 
 program: function_def+
-function_def: "def" NAME "(" comma_list{NAME} ")" _NEWLINE _INDENT stmt+ _DEDENT
+function_def: "def" NAME "(" comma_list{NAME} ")" body
 ?stmt: line_stmt _NEWLINE | multiline_stmt
 
 // multiline statements
 
-multiline_stmt: do_stmt
-do_stmt: "do" _NEWLINE _INDENT stmt+ _DEDENT
+multiline_stmt: do_stmt | if_stmt
+body: _NEWLINE _INDENT stmt+ _DEDENT
+do_stmt: "do" body
+if_stmt: "if" line_stmt body elifs else
+elifs: elif*
+elif: "elif" line_stmt body
+else: ["else" body]
 
 // statements
 
