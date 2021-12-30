@@ -10,15 +10,17 @@ program: function_def+
 function_def: "def" NAME "(" comma_list{NAME} ")" _NEWLINE _INDENT stmt+ _DEDENT
 ?stmt: line_stmt _NEWLINE | multiline_stmt
 
+// multiline statements
+
+multiline_stmt: do_stmt
+do_stmt: "do" _NEWLINE _INDENT stmt+ _DEDENT
+
 // statements
 
 line_stmt: funccall | assignment | thing
-multiline_stmt: do_stmt _NEWLINE _INDENT stmt+ _DEDENT
-
 funccall: NAME "(" comma_list{line_stmt} ")"
 assignment: NAME "=" line_stmt
 
-do_stmt: "do"
 
 thing: NAME | string | number
 

@@ -9,8 +9,9 @@ def main()
 
 def print3(value)
     print(value)
-    print(mul(_,value))
-    print(mul(_,value))
+    do
+        print(mul(_,value))
+        print(mul(_,value))
 
 def ask(question)
     print("Please answer the question: {_}")

@@ -87,12 +87,13 @@ def run_body(body : list, names : dict[str, Object]) -> Value:
             assert isinstance(line_stmt, Tree)
             names["_"] = run_line_stmt(line_stmt, names)
         elif stmt.data == 'multiline_stmt':
-            multiline_stmt, *stmt_body = stmt.children
-            assert len(stmt_body) > 0
+            multiline_stmt, *_ = stmt.children
+            assert len(_) == 0
             assert isinstance(multiline_stmt, Tree)
             if multiline_stmt.data == 'do_stmt':
+                stmt_body = multiline_stmt.children
                 assert all(isinstance(x, Tree) for x in stmt_body)
-                names["_body"] = run_body(stmt_body, names)
+                names["_"] = run_body(stmt_body, names)
             else:
                 raise Fail(f'unknown multiline_stmt: {multiline_stmt}')
         else:

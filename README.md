@@ -14,5 +14,5 @@ features:
 * basic mathematical operations: `add`, `sub`, `mul`, `div`
 * IO operations: `input`, `print`
 * string operations: `length`, `"format string with {variable}."`
-* provisional multiline statements: `do\n body...`
+* provisional multiline statements: `do\n body...` (doesn't really do anything yet)
 * use `_` to get the result of the previous line
