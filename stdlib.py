@@ -31,6 +31,9 @@ def asdf_print(*args : Value) -> Value:
     print(*[x.value for x in args])
     return args[0]  # return *first* argument
 
+def asdf_input() -> Value:
+    return Value(input())
+
 def asdf_add(*args : Value) -> Value:
     if len(args) < 2:
         raise Fail('add: need at least two arguments')

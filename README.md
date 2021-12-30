@@ -12,6 +12,6 @@ features:
 * functions with a fixed number of arguments: `def name(args...)\n body...`
 * assignments: `name = value`
 * basic mathematical operations: `add`, `sub`, `mul`, `div`
-* print operation: `print`
+* IO operations: `input`, `print`
 * multiline statements: `do`
 * use `_` to get the result of the previous operation

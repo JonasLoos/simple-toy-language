@@ -11,14 +11,19 @@ TODO = ...  # placeholder
 class DefinedFunction(Function):
     def __init__(self, name : str, args : list[str], body : list, names : dict[str, Object]):
         def f(*input_args):
-            if len(input_args) == len(args):
-                # only give a copy of `names`, to avoid cluttering the global namespace
-                tmp = {**names}
-                for arg_name, arg_value in zip(args, input_args):
-                    tmp[arg_name] = arg_value
-                return run_body(body, tmp)
-            else:
+            # check if the number of given arguments is correct
+            if len(input_args) != len(args):
                 raise Fail(f'wrong number of arguments when calling {name}: expected {len(args)}, got {len(input_args)}')
+            # initialize arguments
+            # only give a copy of `names`, to avoid cluttering the global namespace
+            tmp = {**names}
+            for arg_name, arg_value in zip(args, input_args):
+                tmp[arg_name] = arg_value
+            # set `_` to first argument
+            tmp['_'] = input_args[0] if len(input_args) > 0 else Value(None)
+            # run the function
+            return run_body(body, tmp)
+
         super().__init__(name, f)
 
 
@@ -35,9 +40,10 @@ def interpret(program : Tree) -> None:
 
 
 def run_program(program):
-    from stdlib import asdf_print, asdf_add, asdf_sub, asdf_mul, asdf_div
+    from stdlib import asdf_print, asdf_input, asdf_add, asdf_sub, asdf_mul, asdf_div
     global_names : dict[str, Object] = {
         'print': Function('print', asdf_print),
+        'input': Function('input', asdf_input),
         'add': Function('add', asdf_add),
         'sub': Function('sub', asdf_sub),
         'mul': Function('mul', asdf_mul),
