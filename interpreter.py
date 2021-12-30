@@ -2,25 +2,11 @@ from typing import Any, Callable
 from lark.lexer import Token
 from lark.tree import Tree
 
+from stdlib import Object, Value, Function, Fail
+
 
 TODO = ...  # placeholder
 
-
-class Object:
-    pass
-
-class Value(Object):
-    def __init__(self, value):
-        self.value = value
-
-class Function(Object):
-    def __init__(self, name : str, f : Callable):
-        self.name = name
-        self.f = f
-    
-    def __call__(self, *args: Value) -> Value:
-        # print('calling function', self.name)
-        return self.f(*args)
 
 class DefinedFunction(Function):
     def __init__(self, name : str, args : list[str], body : list, names : dict[str, Object]):
@@ -36,12 +22,6 @@ class DefinedFunction(Function):
         super().__init__(name, f)
 
 
-class Fail(Exception):
-    """wrapper class to symbolize errors caused by the interpreted source code"""
-    pass
-
-
-
 def interpret(program : Tree) -> None:
     # debug
     print_tree(program)
@@ -55,8 +35,13 @@ def interpret(program : Tree) -> None:
 
 
 def run_program(program):
+    from stdlib import asdf_print, asdf_add, asdf_sub, asdf_mul, asdf_div
     global_names : dict[str, Object] = {
-        'print': Function('print', lambda *args: print(*[x.value for x in args]) or args[0])
+        'print': Function('print', asdf_print),
+        'add': Function('add', asdf_add),
+        'sub': Function('sub', asdf_sub),
+        'mul': Function('mul', asdf_mul),
+        'div': Function('div', asdf_div),
     }
 
     assert program.data == 'program'
@@ -142,8 +127,14 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
                     raise Fail(f'use of {type(Value)} object as Value: {thing}')
             else:
                 raise Fail(f'use of undefined name: {thing}')
-        elif thing.type in ["STRING", "LONG_STRING", "DEC_NUMBER", "HEX_NUMBER", "BIN_NUMBER", "OCT_NUMBER", "FLOAT_NUMBER", "IMAG_NUMBER"]:
-            return Value(thing)
+        elif thing.type == "STRING":
+            return Value(thing[1:-1])
+        elif thing.type == "LONG_STRING":
+            return Value(thing[3:-3])
+        elif thing.type == "DEC_NUMBER":
+            return Value(int(thing))
+        elif thing.type in ["HEX_NUMBER", "BIN_NUMBER", "OCT_NUMBER", "FLOAT_NUMBER", "IMAG_NUMBER"]:
+            raise Fail(f'{thing.type} is not implemented yet')
         else:
             raise Fail(f'unknown thing type: {thing.type}')
     else:

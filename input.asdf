@@ -1,8 +1,8 @@
 
 
 def main()
-    print3(123.2)
-    print3('asdf')
+    print(mul(sub(10,add(mul(3,2,2),40)),sub(0,1)))
+    print3(add(1,2,3))
 
 def print3(msg)
     print(msg)
