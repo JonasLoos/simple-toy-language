@@ -7,6 +7,10 @@ TODO = ...  # placeholder
 
 
 
+##########
+########## basic objects
+##########
+
 class Object:
     """abstract base class for all objects"""
     pass
@@ -25,11 +29,18 @@ class Function(Object):
         return self.f(*args)
 
 
+##########
+########## Fail during execution
+##########
+
 class Fail(Exception):
     """wrapper class to symbolize errors caused by the interpreted source code"""
+
     source : Union[list[str], None] = None
+
     def __init__(self, msg : Any, item : Union[Tree, Token] = None):
         if item:
+            # get first and last token
             first = last = item
             while not isinstance(first, Token):
                 assert isinstance(first, Tree)
@@ -37,13 +48,18 @@ class Fail(Exception):
             while not isinstance(last, Token):
                 assert isinstance(last, Tree)
                 last = last.children[-1]
+            # only continue if first and last tokens were found
             if first and last:
+                # get start- and endpoints of the error
                 firstline = first.line
                 lastline = last.end_line
                 firstcolumn = first.column
                 lastcolumn = last.end_column
+                # only continue if valid start- and endpoints were found
                 if firstline != None and lastline != None and firstcolumn != None and lastcolumn != None:
+                    # create error message
                     text = ''
+                    # single line error
                     if firstline == lastline:
                         text += f'error in line {firstline}\n'
                         if self.source:
@@ -51,18 +67,26 @@ class Fail(Exception):
                             indent = firstcolumn + 2 + max(4, len(str(firstline)))
                             col_err_len = lastcolumn - firstcolumn
                             text += ' ' * indent + '^' * col_err_len + '\n'
+                    # error over multiple lines
                     else:
                         text += f'error in lines {firstline} - {lastline}\n'
                         if self.source:
                             for i in range(firstline, lastline+1):
                                 text += f'{firstline:4d} | {self.source[firstline]}\n'
+                    # create the actual exception
                     super().__init__(text + msg)
                     return
-        # default
+
+        # default error message without line information
         super().__init__("error: " + msg)
 
 
 
+##########
+########## basic functions
+##########
+
+# the `asdf_`-prefix is important for avoiding name conflicts with python functions
 
 def asdf_print(*args : Value) -> Value:
     print(*[x.value for x in args])
