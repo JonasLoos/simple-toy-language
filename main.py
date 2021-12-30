@@ -45,7 +45,15 @@ if __name__ == '__main__':
         print(f'USAGE: {sys.argv[0]} FILE')
         exit()
     input_text = open(sys.argv[1]).read()
+
+    # debug
     # print(parse(input_text).pretty())
     # print('-'*50)
+
+    # init error class
+    from stdlib import Fail
+    Fail.source = input_text.split('\n')
+
+    # run interpreter
     from interpreter import interpret
     interpret(parse(input_text))

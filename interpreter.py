@@ -3,8 +3,8 @@ from lark.lexer import Token
 from lark.tree import Tree
 from stdlib import Object, Value, Function, Fail, std_names
 
-
 TODO = ...  # placeholder
+
 
 
 class DefinedFunction(Function):
@@ -58,7 +58,7 @@ def run_program(program : Tree):
             assert arg.type == 'NAME'
             args += arg,
         if name in std_names:
-            raise Fail(f'Cannot overwrite a predefined function or value: {name}')
+            raise Fail(f'Cannot overwrite a predefined function or value: {name}', name)
         global_names[name] = DefinedFunction(name, args, body, global_names)
 
     # run main function
@@ -158,9 +158,9 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
             if isinstance(func, Function):
                 return func(*argument_values)
             else:
-                raise Fail(f'call of {type(func)} object: {name}')
+                raise Fail(f'call of {type(func)} object: {name}', line_stmt)
         else:
-            raise Fail(f'call of undefined function: {name}')
+            raise Fail(f'call of undefined function: {name}', line_stmt)
     # variable assignment
     elif line_stmt.data == 'assignment':
         name, value = line_stmt.children
@@ -168,7 +168,7 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
         assert name.type == 'NAME'
         assert isinstance(value, Tree)
         if name in std_names:
-            raise Fail(f'Cannot overwrite a predefined function or value: {name}')
+            raise Fail(f'Cannot overwrite a predefined function or value: {name}', name)
         names[name] = result = run_line_stmt(value, names)
         return result
     # thing / value
@@ -181,16 +181,16 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
                 if isinstance(value, Value):
                     return value
                 else:
-                    raise Fail(f'use of {type(Value)} object as Value: {thing}')
+                    raise Fail(f'use of {type(Value)} object as Value: {thing}', thing)
             else:
-                raise Fail(f'use of undefined name: {thing}')
+                raise Fail(f'use of undefined name: {thing}', thing)
         elif thing.type == "STRING":
             # if it's a format string, format it
             if thing[0] == '"':
                 try:
                     return Value(thing[1:-1].format(**get_values(names)))
                 except KeyError as err:
-                    raise Fail(f'Could not find variable {err} used in format string {thing}')
+                    raise Fail(f'Could not find variable {err} used in format string {thing}', thing)
             # otherwise return just the content
             return Value(thing[1:-1])
         elif thing.type == "LONG_STRING":
@@ -199,13 +199,13 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
                 try:
                     return Value(thing[3:-3].format(**get_values(names)))
                 except KeyError as err:
-                    raise Fail(f'Could not find variable {err} used in format string {thing}')
+                    raise Fail(f'Could not find variable {err} used in format string {thing}', thing)
             # otherwise return just the content
             return Value(thing[3:-3])
         elif thing.type == "DEC_NUMBER":
             return Value(int(thing))
         elif thing.type in ["HEX_NUMBER", "BIN_NUMBER", "OCT_NUMBER", "FLOAT_NUMBER", "IMAG_NUMBER"]:
-            raise Fail(f'{thing.type} is not implemented yet')
+            raise Fail(f'{thing.type} is not implemented yet', thing)
         # error
         else:
             # if grammar and interpreter are correct, this point should never be reached

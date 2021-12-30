@@ -3,6 +3,9 @@ from typing import Any, Callable, Union
 from lark.lexer import Token
 from lark.tree import Tree
 
+TODO = ...  # placeholder
+
+
 
 class Object:
     """abstract base class for all objects"""
@@ -22,12 +25,41 @@ class Function(Object):
         return self.f(*args)
 
 
-
 class Fail(Exception):
     """wrapper class to symbolize errors caused by the interpreted source code"""
+    source : Union[list[str], None] = None
     def __init__(self, msg : Any, item : Union[Tree, Token] = None):
-        # TODO: print line, column, ...
-        super().__init__("[TODO] " + msg)
+        if item:
+            first = last = item
+            while not isinstance(first, Token):
+                assert isinstance(first, Tree)
+                first = first.children[0]
+            while not isinstance(last, Token):
+                assert isinstance(last, Tree)
+                last = last.children[-1]
+            if first and last:
+                firstline = first.line
+                lastline = last.end_line
+                firstcolumn = first.column
+                lastcolumn = last.end_column
+                if firstline != None and lastline != None and firstcolumn != None and lastcolumn != None:
+                    text = ''
+                    if firstline == lastline:
+                        text += f'error in line {firstline}\n'
+                        if self.source:
+                            text += f'{firstline:4d} | {self.source[firstline-1]}\n'
+                            indent = firstcolumn + 2 + max(4, len(str(firstline)))
+                            col_err_len = lastcolumn - firstcolumn
+                            text += ' ' * indent + '^' * col_err_len + '\n'
+                    else:
+                        text += f'error in lines {firstline} - {lastline}\n'
+                        if self.source:
+                            for i in range(firstline, lastline+1):
+                                text += f'{firstline:4d} | {self.source[firstline]}\n'
+                    super().__init__(text + msg)
+                    return
+        # default
+        super().__init__("error: " + msg)
 
 
 
