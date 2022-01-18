@@ -1,3 +1,4 @@
+import sys
 from typing import Any
 from lark.lexer import Token
 from lark.tree import Tree
@@ -33,7 +34,6 @@ def interpret(program : Tree) -> None:
         run_program(program)
     # print an error message if it fails
     except Fail as err:
-        import sys
         print(err, file=sys.stderr)
 
 

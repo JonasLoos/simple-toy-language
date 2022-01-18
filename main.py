@@ -1,7 +1,7 @@
+import sys
 from lark.exceptions import UnexpectedToken
 from lark import Lark
 from lark.indenter import Indenter
-import sys
 from lark.tree import Tree
 
 
