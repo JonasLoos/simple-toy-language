@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Any
 from lark.lexer import Token
 from lark.tree import Tree
 from stdlib import Object, Value, Function, Fail, std_names
@@ -9,7 +9,7 @@ TODO = ...  # placeholder
 
 class DefinedFunction(Function):
     def __init__(self, name : str, args : list[str], body : Tree, names : dict[str, Object]):
-        def f(*input_args):
+        def f(*input_args : Value) -> Value:
             # check if the number of given arguments is correct
             if len(input_args) != len(args):
                 raise Fail(f'wrong number of arguments when calling {name}: expected {len(args)}, got {len(input_args)}')
@@ -37,7 +37,7 @@ def interpret(program : Tree) -> None:
         print(err, file=sys.stderr)
 
 
-def run_program(program : Tree):
+def run_program(program : Tree) -> None:
     '''parse the function definitions and run `main`'''
 
     # init global namespace
@@ -190,7 +190,7 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
                 try:
                     return Value(thing[1:-1].format(**get_values(names)))
                 except KeyError as err:
-                    raise Fail(f'Could not find variable {err} used in format string {thing}', thing)
+                    raise Fail(f'Could not find variable {err} used in format string {thing}', thing) from err
             # otherwise return just the content
             return Value(thing[1:-1])
         elif thing.type == "LONG_STRING":
@@ -199,7 +199,7 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
                 try:
                     return Value(thing[3:-3].format(**get_values(names)))
                 except KeyError as err:
-                    raise Fail(f'Could not find variable {err} used in format string {thing}', thing)
+                    raise Fail(f'Could not find variable {err} used in format string {thing}', thing) from err
             # otherwise return just the content
             return Value(thing[3:-3])
         elif thing.type == "DEC_NUMBER":
