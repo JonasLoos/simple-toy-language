@@ -1,6 +1,6 @@
 # a simple toy programming language
 
-This is an interpreter for a new simple toy language. It is implemented in Python with the help of [lark](https://github.com/lark-parser/lark).
+This is a parser and interpreter for a new simple toy language. It is implemented in Python `3.10` with the help of [lark](https://github.com/lark-parser/lark).
 
 usage:
 
