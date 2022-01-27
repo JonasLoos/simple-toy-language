@@ -1,4 +1,4 @@
-from typing import Any, Callable, Union
+from typing import Any, Callable
 
 from lark.lexer import Token
 from lark.tree import Tree
@@ -22,7 +22,7 @@ class Function(Object):
     def __init__(self, name : str, fun : Callable):
         self.name = name
         self.fun = fun
-    
+
     def __call__(self, *args: Value) -> Value:
         # print('calling function', self.name)
         return self.fun(*args)
@@ -37,7 +37,12 @@ class Fail(Exception):
 
     source : list[str] = []
 
-    def __init__(self, msg : Any, item : Union[Tree, Token] = None):
+    @classmethod
+    def init_class(cls, source_text):
+        '''initialize the Fail class using the source code'''
+        cls.source = source_text.split('\n')
+
+    def __init__(self, msg : Any, item : Tree | Token = None):
         if item:
             # get first and last token
             first = last = item
@@ -88,13 +93,16 @@ class Fail(Exception):
 # the `asdf_`-prefix is important for avoiding name conflicts with python functions
 
 def asdf_print(*args : Value) -> Value:
+    '''print the given values'''
     print(*[x.value for x in args])
     return args[0]  # return *first* argument
 
 def asdf_input() -> Value:
+    '''read and return user input'''
     return Value(input())
 
 def asdf_add(*args : Value) -> Value:
+    '''operation: add'''
     if len(args) < 2:
         raise Fail(f'add: need at least two arguments, got {len(args)}')
     try:
@@ -103,6 +111,7 @@ def asdf_add(*args : Value) -> Value:
         raise Fail(err) from err
 
 def asdf_sub(*args : Value) -> Value:
+    '''operation: subtract'''
     if len(args) < 2:
         raise Fail(f'sub: need at least two arguments, got {len(args)}')
     try:
@@ -111,6 +120,7 @@ def asdf_sub(*args : Value) -> Value:
         raise Fail(err) from err
 
 def asdf_mul(*args : Value) -> Value:
+    '''operation: multiply'''
     if len(args) < 2:
         raise Fail(f'mul: need at least two arguments, got {len(args)}')
     try:
@@ -120,6 +130,7 @@ def asdf_mul(*args : Value) -> Value:
         raise Fail(err) from err
 
 def asdf_div(*args : Value) -> Value:
+    '''operation: divide'''
     if len(args) < 2:
         raise Fail(f'div: need at least two arguments, got {len(args)}')
     try:
@@ -129,36 +140,42 @@ def asdf_div(*args : Value) -> Value:
         raise Fail(err) from err
 
 def asdf_length(x : Value) -> Value:
+    '''determine length'''
     if hasattr(x.value, '__len__'):
         return Value(len(x.value))
     else:
         raise Fail(f'cannot determine length of {x}')
 
 def asdf_eq(a : Value, b : Value) -> Value:
+    '''comparison: equal'''
     try:
         return Value(a.value == b.value)
     except TypeError as err:
         raise Fail(f'`eq` between {type(a.value)} and {type(b.value)} is not supported') from err
 
 def asdf_lt(a : Value, b : Value) -> Value:
+    '''comparison: greater than'''
     try:
         return Value(a.value < b.value)
     except TypeError as err:
         raise Fail(f'`lt` between {type(a.value)} and {type(b.value)} is not supported') from err
 
 def asdf_leq(a : Value, b : Value) -> Value:
+    '''comparison: less equal'''
     try:
         return Value(a.value <= b.value)
     except TypeError as err:
         raise Fail(f'l`leq` between {type(a.value)} and {type(b.value)} is not supported') from err
 
 def asdf_gt(a : Value, b : Value) -> Value:
+    '''comparison: greater than'''
     try:
         return Value(a.value > b.value)
     except TypeError as err:
         raise Fail(f'`gt` between {type(a.value)} and {type(b.value)} is not supported') from err
 
 def asdf_geq(a : Value, b : Value) -> Value:
+    '''comparison: greater equal'''
     try:
         return Value(a.value >= b.value)
     except TypeError as err:

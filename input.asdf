@@ -16,6 +16,8 @@ def ask(question)
     l = length(answer = input())
 
     # analyze the answer
+    if eq(answer, 'fail')
+        some_instruction_that_fails
     print("Your answer is `{answer}`. It is {_} characters long.")
     if eq(l, 0)
         print('This is not a real answer, but might still be true!')

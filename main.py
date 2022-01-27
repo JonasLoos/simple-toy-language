@@ -27,7 +27,7 @@ def main() -> None:
 
     # init error class
     from stdlib import Fail
-    Fail.source = input_text.split('\n')
+    Fail.init_class(input_text)
 
     # run interpreter
     from interpreter import interpret
