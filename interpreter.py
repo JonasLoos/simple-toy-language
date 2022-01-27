@@ -4,7 +4,9 @@ provide an `interpret` function for interpreting parsed source code.
 author: Jonas Loos (2022)
 '''
 
-import sys
+# pylint: disable=line-too-long
+# pylint: disable=too-few-public-methods
+
 from typing import Any
 from lark.lexer import Token
 from lark.tree import Tree
@@ -15,8 +17,10 @@ TODO = ...  # placeholder
 
 
 class DefinedFunction(Function):
+    '''Function defined in the source code'''
     def __init__(self, name : str, args : list[str], body : Tree, names : dict[str, Object]):
-        def f(*input_args : Value) -> Value:
+        def fun(*input_args : Value) -> Value:
+            '''a callable function created from a given body'''
             # check if the number of given arguments is correct
             if len(input_args) != len(args):
                 raise Fail(f'wrong number of arguments when calling {name}: expected {len(args)}, got {len(input_args)}')
@@ -30,7 +34,7 @@ class DefinedFunction(Function):
             # run the function
             return run_body(body, tmp)
 
-        super().__init__(name, f)
+        super().__init__(name, fun)
 
 
 def interpret(program : Tree) -> None:

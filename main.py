@@ -6,9 +6,9 @@ author: Jonas Loos (2022)
 
 import sys
 
+from parser import ParserError, parse  # pylint: disable=deprecated-module
 from stdlib import Fail as InterpreterError
 from interpreter import interpret
-from parser import ParserError, parse
 
 
 def fail(msg):
@@ -25,7 +25,7 @@ def main() -> None:
         fail(f'USAGE: {sys.argv[0]} FILE')
 
     # open source code file
-    with open(sys.argv[1]) as input_file:
+    with open(sys.argv[1], encoding='utf-8') as input_file:
         input_text = input_file.read()
 
     # init error class
