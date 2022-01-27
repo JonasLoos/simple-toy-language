@@ -152,7 +152,7 @@ def asdf_div(*args : Value) -> Value:
 
 def asdf_length(x : Value) -> Value:
     '''determine length'''
-    if hasattr(x.value, '__len__'):  # no-else-return
+    if hasattr(x.value, '__len__'):
         return Value(len(x.value))
     else:
         raise Fail(f'cannot determine length of {x}')

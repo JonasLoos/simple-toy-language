@@ -2,8 +2,13 @@
 
 disable=
     line-too-long,
-    too-few-public-methods,
     trailing-comma-tuple,
-    too-many-nested-blocks,
     invalid-name,
-    import-outside-toplevel
+    import-outside-toplevel,
+    no-else-return,
+    too-few-public-methods,
+    too-many-nested-blocks,
+    too-many-locals,
+    too-many-return-statements,
+    too-many-branches,
+    too-many-statements,
