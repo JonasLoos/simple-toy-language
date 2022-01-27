@@ -8,7 +8,9 @@ usage:
 python main.py input.asdf
 ```
 
-features:
+
+## Features
+
 * functions with a fixed number of arguments: `def name(args...)\n body...`
 * assignments: `name = value`
 * basic mathematical operations: `add`, `sub`, `mul`, `div`
@@ -17,3 +19,12 @@ features:
 * control-flow statements: `if ...\n ... elif ...\n else ...`
 * use `_` to get the result of the previous line
 * (sometimes) nice error messages
+
+
+## Development
+
+This project uses `pylint` with a corresponding github action for automatic code analysis.
+
+Unit-tests can be found in `test.py`.
+
+The easiest way to get started is to use VS Code with the [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension and `Rebuild and Reopen in Container`.
