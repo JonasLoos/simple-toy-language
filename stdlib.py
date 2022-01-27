@@ -21,10 +21,12 @@ class Object:
     """abstract base class for all objects"""
 
 class Value(Object):
+    '''basic value object'''
     def __init__(self, value):
         self.value = value
 
 class Function(Object):
+    '''basic function object'''
     def __init__(self, name : str, fun : Callable):
         self.name = name
         self.fun = fun
