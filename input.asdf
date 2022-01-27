@@ -20,7 +20,7 @@ def ask(question)
         some_instruction_that_fails
     print("Your answer is `{answer}`. It is {_} characters long.")
     if eq(l, 0)
-        print('This is not a real answer, but might still be true!')
+        print('You seem lazy, but the answer might be true!')
     elif lt(l, 12)
         print('Thank you')
     else
