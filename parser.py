@@ -21,21 +21,26 @@ class TreeIndenter(Indenter):
 
 
 def parse(input_text : str) -> Tree:
-    # dont fail when no newline at the end
+    '''parse a given string of source code'''
+    # dont fail when there is no newline at the end
     input_text += '\n'
 
     # parse and print
     try:
         return parser.parse(input_text)
     except UnexpectedToken as error:
-        indent = '\n    '
-        nl = '\n'
-        res = ''
-        def pos(x : int) -> int: return x if x > 0 else 0
-        res = f'{indent}{indent.join([f"{i:2d}| {x}" for i, x in enumerate(str(input_text).split(nl)[pos(error.line-2):error.line], pos(error.line-1))])}'  # source code
-        res += indent + '   ' + ' ' * error.column + '^\n'  # column indicator
-        if error: res += (f'{indent}{indent.join(str(error).strip().split(nl))}')
-        raise Exception(res + '\n') from error
+        indent = '\n  '
+        # create error message
+        res = 'Error during parsing:\n'
+        error_lines = str(input_text).split('\n')[max(0, error.line-2):error.line]  # select relevant lines from source code
+        error_lines = [f'{i:4d} | {x}' for i, x in enumerate(error_lines, max(0, error.line-1))]  # indent relevant lines
+        res += f'{indent}{indent.join(error_lines)}'  # add relevant lines
+        res += indent + '      ' + ' ' * error.column + '^\n'  # add column indicator
+        if error: res += indent + indent.join(str(error).strip().split('\n'))  # add error message
+        # print error
+        print(res)
+        exit()
+        # raise Exception(res + '\n') from error  # use this instead if the traceback should be shown
 
 
 # init parser (even if imported)
@@ -44,4 +49,3 @@ with open('grammar.lark') as grammar_file:
     # parser = Lark(grammar_file, parser='lalr', postlex=TreeIndenter())  # type: ignore[abstract]
     # slower but can handle more
     parser = Lark(grammar_file, parser='earley', postlex=TreeIndenter())  # type: ignore[abstract]
-

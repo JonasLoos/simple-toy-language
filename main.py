@@ -11,6 +11,7 @@ from parser import parse
 
 
 def main() -> None:
+    '''parse and interpret the source code file specified as a command line argument'''
     # check command line args
     if len(sys.argv) != 2:
         print(f'USAGE: {sys.argv[0]} FILE')

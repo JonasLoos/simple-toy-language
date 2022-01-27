@@ -67,28 +67,31 @@ class Fail(Exception):
                 lastcolumn = last.end_column
                 # only continue if valid start- and endpoints were found
                 if all(x is not None for x in [firstline, lastline, firstcolumn, lastcolumn]):
+                    indent = '  '
                     # create error message
                     text = ''
                     # single line error
                     if firstline == lastline:
-                        text += f'error in line {firstline}\n'
+                        text += f'\nError during execution of line {firstline}:\n\n'
                         if self.source:
-                            text += f'{firstline:4d} | {self.source[firstline-1]}\n'
-                            indent = firstcolumn + 2 + max(4, len(str(firstline)))
+                            text += indent + f'{firstline:4d} | {self.source[firstline-1]}\n'
+                            col_err_indent = firstcolumn + 2 + max(4, len(str(firstline)))
                             col_err_len = lastcolumn - firstcolumn
-                            text += ' ' * indent + '^' * col_err_len + '\n'
+                            text += indent + ' ' * col_err_indent + '^' * col_err_len + '\n\n'
                     # error over multiple lines
                     else:
-                        text += f'error in lines {firstline} - {lastline}\n'
+                        text += f'Error during execution of lines {firstline} - {lastline}:\n\n'
                         if self.source:
                             for _ in range(firstline, lastline+1):
-                                text += f'{firstline:4d} | {self.source[firstline]}\n'
+                                text += indent + f'{firstline:4d} | {self.source[firstline]}\n'
+                            text += '\n'
                     # create the actual exception
-                    super().__init__(text + msg)
+                    text += '\n'.join(indent + x for x in msg.split('\n'))
+                    super().__init__(text)
                     return
 
         # default error message without line information
-        super().__init__("error: " + msg)
+        super().__init__("Error during execution: " + msg)
 
 
 
