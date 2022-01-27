@@ -4,8 +4,6 @@ initialize a the parser and provide the `parse` function
 author: Jonas Loos (2022)
 '''
 
-# pylint: disable=line-too-long
-
 from lark.indenter import Indenter
 from lark import Lark, LexError, ParseError
 from lark.tree import Tree

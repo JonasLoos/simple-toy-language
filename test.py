@@ -5,7 +5,6 @@ author: Jonas Loos (2022)
 '''
 
 # pylint: disable=missing-function-docstring
-# pylint: disable=line-too-long
 
 import unittest
 

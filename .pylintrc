@@ -1,0 +1,7 @@
+disable=
+    line-too-long,
+    too-few-public-methods,
+    trailing-comma-tuple,
+    too-many-nested-blocks,
+    invalid-name,
+    import-outside-toplevel

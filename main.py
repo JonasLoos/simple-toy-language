@@ -4,8 +4,6 @@ main file of simple-toy-language
 author: Jonas Loos (2022)
 '''
 
-# pylint: disable=line-too-long
-
 import sys
 
 from parser import ParserError, parse  # pylint: disable=deprecated-module

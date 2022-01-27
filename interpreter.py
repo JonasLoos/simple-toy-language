@@ -4,9 +4,6 @@ provide an `interpret` function for interpreting parsed source code.
 author: Jonas Loos (2022)
 '''
 
-# pylint: disable=line-too-long
-# pylint: disable=too-few-public-methods
-
 from typing import Any
 from lark.lexer import Token
 from lark.tree import Tree
