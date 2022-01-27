@@ -5,8 +5,7 @@ author: Jonas Loos (2022)
 '''
 
 from lark.indenter import Indenter
-from lark.exceptions import UnexpectedToken
-from lark import Lark
+from lark import Lark, LexError, ParseError
 from lark.tree import Tree
 
 
@@ -28,15 +27,17 @@ def parse(input_text : str) -> Tree:
     # parse and print
     try:
         return parser.parse(input_text)
-    except UnexpectedToken as error:
+    except (LexError, ParseError) as error:
         indent = '\n  '
         # create error message
         res = 'Error during parsing:\n'
-        error_lines = str(input_text).split('\n')[max(0, error.line-2):error.line]  # select relevant lines from source code
-        error_lines = [f'{i:4d} | {x}' for i, x in enumerate(error_lines, max(0, error.line-1))]  # indent relevant lines
-        res += f'{indent}{indent.join(error_lines)}'  # add relevant lines
-        res += indent + '      ' + ' ' * error.column + '^\n'  # add column indicator
-        if error: res += indent + indent.join(str(error).strip().split('\n'))  # add error message
+        if hasattr(error, 'line'):
+            error_lines = str(input_text).split('\n')[max(0, error.line-2):error.line]  # select relevant lines from source code
+            error_lines = [f'{i:4d} | {x}' for i, x in enumerate(error_lines, max(0, error.line-1))]  # indent relevant lines
+            res += f'{indent}{indent.join(error_lines)}'  # add relevant lines
+        if hasattr(error, 'column'):
+            res += indent + '      ' + ' ' * error.column + '^\n'  # add column indicator
+        res += indent + indent.join(str(error).strip().split('\n'))  # add error message
         # print error
         print(res)
         exit()
