@@ -13,20 +13,19 @@ TODO = ...  # placeholder
 
 class Object:
     """abstract base class for all objects"""
-    pass
 
 class Value(Object):
     def __init__(self, value):
         self.value = value
 
 class Function(Object):
-    def __init__(self, name : str, f : Callable):
+    def __init__(self, name : str, fun : Callable):
         self.name = name
-        self.f = f
+        self.fun = fun
     
     def __call__(self, *args: Value) -> Value:
         # print('calling function', self.name)
-        return self.f(*args)
+        return self.fun(*args)
 
 
 ##########
@@ -36,7 +35,7 @@ class Function(Object):
 class Fail(Exception):
     """wrapper class to symbolize errors caused by the interpreted source code"""
 
-    source : Union[list[str], None] = None
+    source : list[str] = []
 
     def __init__(self, msg : Any, item : Union[Tree, Token] = None):
         if item:
@@ -56,7 +55,7 @@ class Fail(Exception):
                 firstcolumn = first.column
                 lastcolumn = last.end_column
                 # only continue if valid start- and endpoints were found
-                if firstline != None and lastline != None and firstcolumn != None and lastcolumn != None:
+                if all(x is not None for x in [firstline, lastline, firstcolumn, lastcolumn]):
                     # create error message
                     text = ''
                     # single line error
@@ -71,7 +70,7 @@ class Fail(Exception):
                     else:
                         text += f'error in lines {firstline} - {lastline}\n'
                         if self.source:
-                            for i in range(firstline, lastline+1):
+                            for _ in range(firstline, lastline+1):
                                 text += f'{firstline:4d} | {self.source[firstline]}\n'
                     # create the actual exception
                     super().__init__(text + msg)
@@ -101,7 +100,7 @@ def asdf_add(*args : Value) -> Value:
     try:
         return Value(sum(arg.value for arg in args))
     except Exception as err:
-        raise Fail(err)
+        raise Fail(err) from err
 
 def asdf_sub(*args : Value) -> Value:
     if len(args) < 2:
@@ -109,7 +108,7 @@ def asdf_sub(*args : Value) -> Value:
     try:
         return Value(args[0].value - sum(arg.value for arg in args[1:]))
     except Exception as err:
-        raise Fail(err)
+        raise Fail(err) from err
 
 def asdf_mul(*args : Value) -> Value:
     if len(args) < 2:
@@ -118,7 +117,7 @@ def asdf_mul(*args : Value) -> Value:
         import math
         return Value(math.prod(arg.value for arg in args))
     except Exception as err:
-        raise Fail(err)
+        raise Fail(err) from err
 
 def asdf_div(*args : Value) -> Value:
     if len(args) < 2:
@@ -127,7 +126,7 @@ def asdf_div(*args : Value) -> Value:
         import math
         return Value(args[0].value / math.prod(arg.value for arg in args[1:]))
     except Exception as err:
-        raise Fail(err)
+        raise Fail(err) from err
 
 def asdf_length(x : Value) -> Value:
     if hasattr(x.value, '__len__'):
@@ -138,32 +137,32 @@ def asdf_length(x : Value) -> Value:
 def asdf_eq(a : Value, b : Value) -> Value:
     try:
         return Value(a.value == b.value)
-    except TypeError:
-        raise Fail(f'`eq` between {type(a.value)} and {type(b.value)} is not supported')
+    except TypeError as err:
+        raise Fail(f'`eq` between {type(a.value)} and {type(b.value)} is not supported') from err
 
 def asdf_lt(a : Value, b : Value) -> Value:
     try:
         return Value(a.value < b.value)
-    except TypeError:
-        raise Fail(f'`lt` between {type(a.value)} and {type(b.value)} is not supported')
+    except TypeError as err:
+        raise Fail(f'`lt` between {type(a.value)} and {type(b.value)} is not supported') from err
 
 def asdf_leq(a : Value, b : Value) -> Value:
     try:
         return Value(a.value <= b.value)
-    except TypeError:
-        raise Fail(f'l`leq` between {type(a.value)} and {type(b.value)} is not supported')
+    except TypeError as err:
+        raise Fail(f'l`leq` between {type(a.value)} and {type(b.value)} is not supported') from err
 
 def asdf_gt(a : Value, b : Value) -> Value:
     try:
         return Value(a.value > b.value)
-    except TypeError:
-        raise Fail(f'`gt` between {type(a.value)} and {type(b.value)} is not supported')
+    except TypeError as err:
+        raise Fail(f'`gt` between {type(a.value)} and {type(b.value)} is not supported') from err
 
 def asdf_geq(a : Value, b : Value) -> Value:
     try:
         return Value(a.value >= b.value)
-    except TypeError:
-        raise Fail(f'g`geq` between {type(a.value)} and {type(b.value)} is not supported')
+    except TypeError as err:
+        raise Fail(f'g`geq` between {type(a.value)} and {type(b.value)} is not supported') from err
 
 
 std_names : dict[str, Object] = {
