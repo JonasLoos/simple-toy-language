@@ -1,3 +1,9 @@
+'''
+This class contains the implementations of the functions in the standard-library.
+
+author: Jonas Loos (2022)
+'''
+
 from typing import Any, Callable
 
 from lark.lexer import Token

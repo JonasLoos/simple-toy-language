@@ -1,3 +1,9 @@
+'''
+provide an `interpret` function for interpreting parsed source code.
+
+author: Jonas Loos (2022)
+'''
+
 import sys
 from typing import Any
 from lark.lexer import Token
