@@ -5,31 +5,41 @@ author: Jonas Loos (2022)
 '''
 
 import sys
-from stdlib import Fail
+
+from stdlib import Fail as InterpreterError
 from interpreter import interpret
-from parser import parse
+from parser import ParserError, parse
+
+
+def fail(msg):
+    '''print error message and exit'''
+    print(msg, file=sys.stderr)
+    sys.exit(1)
+
 
 
 def main() -> None:
     '''parse and interpret the source code file specified as a command line argument'''
     # check command line args
     if len(sys.argv) != 2:
-        print(f'USAGE: {sys.argv[0]} FILE')
-        exit()
+        fail(f'USAGE: {sys.argv[0]} FILE')
 
     # open source code file
     with open(sys.argv[1]) as input_file:
         input_text = input_file.read()
 
     # init error class
-    Fail.init_class(input_text)
+    InterpreterError.init_class(input_text)
 
     # debug
     # print(parse(input_text).pretty())
     # print('-'*50)
 
-    # run interpreter
-    interpret(parse(input_text))
+    # run parser and interpreter
+    try:
+        interpret(parse(input_text))
+    except (ParserError, InterpreterError) as error:
+        fail(error)
 
 
 

@@ -9,6 +9,10 @@ from lark import Lark, LexError, ParseError
 from lark.tree import Tree
 
 
+class ParserError(Exception):
+    '''error during parsing'''
+
+
 class TreeIndenter(Indenter):
     NL_type : str = '_NEWLINE'
     OPEN_PAREN_types : list = []
@@ -21,6 +25,10 @@ class TreeIndenter(Indenter):
 
 def parse(input_text : str) -> Tree:
     '''parse a given string of source code'''
+
+    if not input_text.strip():
+        raise ParserError('Error during parsing: empty input\n')
+
     # dont fail when there is no newline at the end
     input_text += '\n'
 
@@ -39,8 +47,9 @@ def parse(input_text : str) -> Tree:
             res += indent + '      ' + ' ' * error.column + '^\n'  # add column indicator
         res += indent + indent.join(str(error).strip().split('\n'))  # add error message
         # print error
-        print(res)
-        exit()
+        # print(res)
+        # sys.exit(1)
+        raise ParserError(res) from error
         # raise Exception(res + '\n') from error  # use this instead if the traceback should be shown
 
 

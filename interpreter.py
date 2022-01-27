@@ -35,16 +35,6 @@ class DefinedFunction(Function):
 
 def interpret(program : Tree) -> None:
     '''main entry point - interpret the given program '''
-    # try to run the program
-    try:
-        run_program(program)
-    # print an error message if it fails
-    except Fail as err:
-        print(err, file=sys.stderr)
-
-
-def run_program(program : Tree) -> None:
-    '''parse the function definitions and run `main`'''
 
     # init global namespace
     global_names = {**std_names}
