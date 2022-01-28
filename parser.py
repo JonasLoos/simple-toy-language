@@ -59,4 +59,4 @@ with open('grammar.lark', encoding='utf-8') as grammar_file:
     # fast but limited
     # parser = Lark(grammar_file, parser='lalr', postlex=TreeIndenter())  # type: ignore[abstract]
     # slower but can handle more
-    parser = Lark(grammar_file, parser='earley', postlex=TreeIndenter())  # type: ignore[abstract]
+    parser = Lark(grammar_file, parser='earley', maybe_placeholders=False, postlex=TreeIndenter())  # type: ignore[abstract]

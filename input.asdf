@@ -20,8 +20,8 @@ def ask(question)
         some_instruction_that_fails
     print("Your answer is `{answer}`. It is {_} characters long.")
     if eq(l, 0)
-        print('You seem lazy, but the answer might be true!')
+        print('You are a fox!')
     elif lt(l, 12)
-        print('Thank you')
+        print('Thank you for your opinion on that matter.')
     else
         print("This is a bit long, isn't it?")
