@@ -41,18 +41,18 @@ def interpret(program : Tree) -> None:
     global_names = {**std_names}
 
     # parse function definitions
-    assert program.data == 'program'
+    assert program.data == 'program', program.data
     for function_def in program.children:
-        assert isinstance(function_def, Tree)
-        assert function_def.data == 'function_def'
+        assert isinstance(function_def, Tree), function_def
+        assert function_def.data == 'function_def', function_def.data
         name, arguments, body = function_def.children
-        assert isinstance(name, Token)
-        assert isinstance(arguments, Tree)
-        assert isinstance(body, Tree)
+        assert isinstance(name, Token), name
+        assert isinstance(arguments, Tree), arguments
+        assert isinstance(body, Tree), body
         args : list[str] = []
         for arg in arguments.children:
-            assert isinstance(arg, Token)
-            assert arg.type == 'NAME'
+            assert isinstance(arg, Token), arg
+            assert arg.type == 'NAME', arg.type
             args += arg,
         if name in std_names:
             raise Fail(f'Cannot overwrite a predefined function or value: {name}', name)
@@ -71,46 +71,46 @@ def interpret(program : Tree) -> None:
 
 def run_body(body : Tree, names : dict[str, Object]) -> Value:
     '''run the statements in the body of a function or multiline statement'''
-    assert body.data == 'body'
+    assert body.data == 'body', body.data
     for stmt in body.children:
-        assert isinstance(stmt, Tree)
+        assert isinstance(stmt, Tree), stmt
         # single-line statement
         if stmt.data == 'line_stmt':
             names["_"] = run_line_stmt(stmt, names)
         # multi-line statement
         elif stmt.data == 'multiline_stmt':
             multiline_stmt, = stmt.children
-            assert isinstance(multiline_stmt, Tree)
+            assert isinstance(multiline_stmt, Tree), multiline_stmt
             # do
             if multiline_stmt.data == 'do_stmt':
                 do_body, = multiline_stmt.children
-                assert isinstance(do_body, Tree)
+                assert isinstance(do_body, Tree), do_body
                 # if block level variable scoope is desired, use `{**names}` instead
                 names["_"] = run_body(do_body, names)
             # if elif... else
             elif multiline_stmt.data == 'if_stmt':
                 if_condition, if_body, elifs, else_stmt = multiline_stmt.children
-                assert isinstance(if_condition, Tree)
-                assert if_condition.data == 'line_stmt'
-                assert isinstance(if_body, Tree)
-                assert if_body.data == 'body'
-                assert isinstance(elifs, Tree)
-                assert elifs.data == 'elifs'
-                assert isinstance(else_stmt, Tree)
-                assert else_stmt.data == 'else'
+                assert isinstance(if_condition, Tree), if_condition
+                assert if_condition.data == 'line_stmt', if_condition.data
+                assert isinstance(if_body, Tree), if_body
+                assert if_body.data == 'body', if_body.data
+                assert isinstance(elifs, Tree), elifs
+                assert elifs.data == 'elifs', elifs.data
+                assert isinstance(else_stmt, Tree), else_stmt
+                assert else_stmt.data == 'else', else_stmt.data
                 # handle if
                 conditions = [(if_condition, if_body)]
                 # handle elifs
                 for elif_stmt in elifs.children:
-                    assert isinstance(elif_stmt, Tree)
+                    assert isinstance(elif_stmt, Tree), elif_stmt
                     elif_condition, elif_body = elif_stmt.children
-                    assert isinstance(elif_condition, Tree)
-                    assert isinstance(elif_body, Tree)
+                    assert isinstance(elif_condition, Tree), elif_condition
+                    assert isinstance(elif_body, Tree), elif_body
                     conditions += (elif_condition, elif_body),
                 # handle else
                 if len(else_stmt.children) > 0:
                     else_body, = else_stmt.children
-                    assert isinstance(else_body, Tree)
+                    assert isinstance(else_body, Tree), else_body
                     assert else_body.data == 'body'
                     # use `true` as condition, to make sure else is executed when no other statement is
                     true_stmt = Tree('line_stmt', [Tree('thing', [Token('NAME', 'true')])])  # type: ignore
@@ -136,19 +136,19 @@ def run_body(body : Tree, names : dict[str, Object]) -> Value:
 def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
     '''run a single line statement (includes also parts of a line that could stand alone)'''
     # extract actual statement
-    assert line_stmt.data == 'line_stmt'
+    assert line_stmt.data == 'line_stmt', line_stmt.data
     tmp, = line_stmt.children
-    assert isinstance(tmp, Tree)
+    assert isinstance(tmp, Tree), tmp
     line_stmt = tmp
     # function call
     if line_stmt.data == 'funccall':
         name, arguments = line_stmt.children
-        assert isinstance(name, Token)
-        assert isinstance(arguments, Tree)
+        assert isinstance(name, Token), name
+        assert isinstance(arguments, Tree), arguments
         assert arguments.data == 'comma_list', arguments.data
         argument_values : list[Value] = []
         for argument in arguments.children:
-            assert isinstance(argument, Tree)
+            assert isinstance(argument, Tree), argument
             argument_values += run_line_stmt(argument, names),
         if name in names:
             func = names[name]
@@ -161,9 +161,9 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
     # variable assignment
     elif line_stmt.data == 'assignment':
         name, value = line_stmt.children
-        assert isinstance(name, Token)
-        assert name.type == 'NAME'
-        assert isinstance(value, Tree)
+        assert isinstance(name, Token), name
+        assert name.type == 'NAME', name.type
+        assert isinstance(value, Tree), value
         if name in std_names:
             raise Fail(f'Cannot overwrite a predefined function or value: {name}', name)
         names[name] = result = run_line_stmt(value, names)
@@ -171,7 +171,7 @@ def run_line_stmt(line_stmt : Tree, names : dict[str, Object]) -> Value:
     # thing / value
     elif line_stmt.data == 'thing':
         thing, = line_stmt.children
-        assert isinstance(thing, Token)
+        assert isinstance(thing, Token), thing
         if thing.type == 'NAME':
             if thing in names:
                 value = names[thing]
