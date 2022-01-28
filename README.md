@@ -1,5 +1,7 @@
 # a simple toy programming language
 
+![Pylint](https://github.com/JonasLoos/simple-toy-language/workflows/Pylint/badge.svg?branch=main)
+
 This is a parser and interpreter for a new simple toy language. It is implemented in Python `3.10` with the help of [lark](https://github.com/lark-parser/lark).
 
 usage:
