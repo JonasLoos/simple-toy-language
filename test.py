@@ -35,10 +35,6 @@ class TestParser(unittest.TestCase):
         with self.assertRaises(parser.ParserError):
             parser.parse('')
 
-    def test_fail(self):
-        self.assertFalse(True)
-
-
 
 
 if __name__ == '__main__':
