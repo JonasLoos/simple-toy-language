@@ -11,11 +11,11 @@ from stdlib import Fail as InterpreterError
 from interpreter import interpret
 
 
+
 def fail(msg):
     '''print error message and exit'''
     print(msg, file=sys.stderr)
     sys.exit(1)
-
 
 
 def main() -> None:

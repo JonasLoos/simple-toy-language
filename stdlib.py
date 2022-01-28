@@ -20,10 +20,12 @@ TODO = ...  # placeholder
 class Object:
     """abstract base class for all objects"""
 
+
 class Value(Object):
     '''basic value object'''
     def __init__(self, value):
         self.value = value
+
 
 class Function(Object):
     '''basic function object'''
@@ -34,6 +36,7 @@ class Function(Object):
     def __call__(self, *args: Value) -> Value:
         # print('calling function', self.name)
         return self.fun(*args)
+
 
 
 ##########
@@ -191,6 +194,7 @@ def asdf_geq(a : Value, b : Value) -> Value:
         return Value(a.value >= b.value)
     except TypeError as err:
         raise Fail(f'g`geq` between {type(a.value)} and {type(b.value)} is not supported') from err
+
 
 
 std_names : dict[str, Object] = {

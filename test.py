@@ -12,6 +12,7 @@ import subprocess
 import parser  # pylint: disable=deprecated-module
 
 
+
 class TestMain(unittest.TestCase):
     '''unit-tests for main.py'''
     @staticmethod

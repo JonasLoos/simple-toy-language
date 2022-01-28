@@ -9,6 +9,7 @@ from lark import Lark, LexError, ParseError
 from lark.tree import Tree
 
 
+
 class ParserError(Exception):
     '''error during parsing'''
 
@@ -52,6 +53,7 @@ def parse(input_text : str) -> Tree:
         # sys.exit(1)
         raise ParserError(res) from error
         # raise Exception(res + '\n') from error  # use this instead if the traceback should be shown
+
 
 
 # init parser (even if imported)
