@@ -20,7 +20,7 @@ TODO = ...  # placeholder
 class DefinedFunction(Function):
     '''Function defined in the source code'''
     def __init__(self, name : str, args : list[str], run_body : Callable):
-        def fun(names : dict[str, Object], *input_args : Value) -> Value:
+        def fun(names : dict[str, Object], *input_args : Value) -> Object:
             '''a callable function created from a given body'''
             # check if the number of given arguments is correct
             if len(input_args) != len(args):
@@ -34,10 +34,9 @@ class DefinedFunction(Function):
 
         super().__init__(name, fun)
 
-    def __call__(self, names : dict[str, Object], *args : Value):
+    def __call__(self, names : dict[str, Object], *args : Value) -> Object:
         '''TODO remove if Function is adjusted'''
-        print('calling function', self.name, 'with', args, 'and names:', names)
-        self.fun(names, *args)
+        return self.fun(names, *args)
 
 
 
@@ -121,8 +120,10 @@ class Interpreter(LarkInterpreter):
             func = names[name]
             if not isinstance(func, Function):
                 raise Fail(f'call of {type(func)} object: {name}', funccall)
-            # evaluate arguments and call the function
-            return func(names, *[x(names) for x in arguments])  # TODO: adjust Function class in `stdlib.py`
+            # evaluate arguments
+            args = [x(names) for x in arguments]
+            # call the function
+            return func(names, *args)  # TODO: adjust Function class in `stdlib.py`
         return run_funccall
 
     def comma_list(self, comma_list : Tree) -> list[Callable]:

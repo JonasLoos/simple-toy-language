@@ -37,7 +37,7 @@ class Function(Object):
         self.fun = fun
 
     def __call__(self, *args: Value) -> Value:
-        print('calling function', self.name, 'with', args)
+        # print('calling function', self.name, 'with', args)
         return self.fun(*args)
 
     def print(self):
