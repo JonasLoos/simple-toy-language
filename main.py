@@ -8,7 +8,7 @@ import sys
 
 from parser import ParserError, parse  # pylint: disable=deprecated-module
 from stdlib import Fail as InterpreterError
-from interpreter import interpret
+from interpreterLark import interpret
 
 
 
