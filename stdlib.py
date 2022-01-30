@@ -27,6 +27,7 @@ class Value(Object):
         self.value = value
 
     def print(self):
+        '''determine how this object should be printed out'''
         return self.value
 
 
@@ -41,6 +42,7 @@ class Function(Object):
         return self.fun(*args)
 
     def print(self):
+        '''determine how this object should be printed out'''
         return f'<Function {self.name}>'
 
 
