@@ -2,6 +2,7 @@ def main()
     print('factorial(5) =', factorial(5))
     ask('what does the fox say?')
 
+
 def factorial(n)
     # calculate the factorial of n
     if lt(n, 2)

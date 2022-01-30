@@ -15,10 +15,10 @@ function_def: "def" NAME "(" comma_list{NAME} ")" body
 multiline_stmt: do_stmt | if_stmt
 body: _NEWLINE _INDENT stmt+ _DEDENT
 do_stmt: "do" body
-if_stmt: "if" line_stmt body elifs else
-elifs: elif*
-elif: "elif" line_stmt body
-else: ["else" body]
+if_stmt: "if" line_stmt body elifs else_stmt
+elifs: elif_stmt*
+elif_stmt: "elif" line_stmt body
+else_stmt: ["else" body]
 
 // statements
 

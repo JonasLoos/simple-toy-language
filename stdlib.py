@@ -26,6 +26,9 @@ class Value(Object):
     def __init__(self, value):
         self.value = value
 
+    def print(self):
+        return self.value
+
 
 class Function(Object):
     '''basic function object'''
@@ -34,8 +37,11 @@ class Function(Object):
         self.fun = fun
 
     def __call__(self, *args: Value) -> Value:
-        # print('calling function', self.name)
+        print('calling function', self.name, 'with', args)
         return self.fun(*args)
+
+    def print(self):
+        return f'<Function {self.name}>'
 
 
 
@@ -62,7 +68,7 @@ class Fail(Exception):
                 first = first.children[0]
             while not isinstance(last, Token):
                 assert isinstance(last, Tree)
-                last = last.children[-1]
+                last = last.children[-1]  # TODO: what if there are not children?
             # only continue if first and last tokens were found
             if first and last:
                 # get start- and endpoints of the error
@@ -96,7 +102,7 @@ class Fail(Exception):
                     return
 
         # default error message without line information
-        super().__init__("Error during execution: " + msg)
+        super().__init__("Error during execution: " + str(msg))
 
 
 
@@ -108,7 +114,7 @@ class Fail(Exception):
 
 def asdf_print(*args : Value) -> Value:
     '''print the given values'''
-    print(*[x.value for x in args])
+    print(*[x.print() for x in args])
     return args[0]  # return *first* argument
 
 def asdf_input() -> Value:
@@ -121,7 +127,7 @@ def asdf_add(*args : Value) -> Value:
         raise Fail(f'add: need at least two arguments, got {len(args)}')
     try:
         return Value(sum(arg.value for arg in args))
-    except Exception as err:
+    except TypeError as err:
         raise Fail(err) from err
 
 def asdf_sub(*args : Value) -> Value:
@@ -130,7 +136,7 @@ def asdf_sub(*args : Value) -> Value:
         raise Fail(f'sub: need at least two arguments, got {len(args)}')
     try:
         return Value(args[0].value - sum(arg.value for arg in args[1:]))
-    except Exception as err:
+    except TypeError as err:
         raise Fail(err) from err
 
 def asdf_mul(*args : Value) -> Value:
@@ -140,7 +146,7 @@ def asdf_mul(*args : Value) -> Value:
     try:
         import math
         return Value(math.prod(arg.value for arg in args))
-    except Exception as err:
+    except TypeError as err:
         raise Fail(err) from err
 
 def asdf_div(*args : Value) -> Value:
@@ -150,7 +156,9 @@ def asdf_div(*args : Value) -> Value:
     try:
         import math
         return Value(args[0].value / math.prod(arg.value for arg in args[1:]))
-    except Exception as err:
+    except ZeroDivisionError as err:
+        raise Fail('div: disors have to be greater than 0') from err
+    except TypeError as err:
         raise Fail(err) from err
 
 def asdf_length(x : Value) -> Value:

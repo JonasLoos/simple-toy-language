@@ -98,7 +98,7 @@ def run_body(body : Tree, names : dict[str, Object]) -> Value:
                     assert isinstance(elifs, Tree), elifs
                     assert elifs.data == 'elifs', elifs.data
                     assert isinstance(else_stmt, Tree), else_stmt
-                    assert else_stmt.data == 'else', else_stmt.data
+                    assert else_stmt.data == 'else_stmt', else_stmt.data
                     # handle if
                     conditions = [(if_condition, if_body)]
                     # handle elifs
