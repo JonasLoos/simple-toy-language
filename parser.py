@@ -4,7 +4,7 @@ initialize a the parser and provide the `parse` function
 author: Jonas Loos (2022)
 '''
 
-from lark.indenter import Indenter
+from lark.indenter import Indenter, DedentError
 from lark import Lark, LexError, ParseError
 from lark.tree import Tree
 
@@ -37,7 +37,7 @@ def parse(input_text : str) -> Tree:
     # parse and print
     try:
         return parser.parse(input_text)
-    except (LexError, ParseError) as error:
+    except (LexError, ParseError, DedentError) as error:
         indent = '\n  '
         # create error message
         res = 'Error during parsing:\n'

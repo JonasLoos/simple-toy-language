@@ -4,13 +4,16 @@ This class contains the implementations of the functions in the standard-library
 author: Jonas Loos (2022)
 '''
 
+import sys
 from typing import Any, Callable
-
 from lark.lexer import Token
 from lark.tree import Tree
 
 TODO = ...  # placeholder
 
+# define default input/output streams
+input_stream = sys.stdin
+output_stream = sys.stdout
 
 
 ##########
@@ -115,12 +118,12 @@ class Fail(Exception):
 
 def asdf_print(*args : Value) -> Value:
     '''print the given values'''
-    print(*[x.print() for x in args])
+    print(*[x.print() for x in args], file=output_stream)
     return args[0]  # return *first* argument
 
 def asdf_input() -> Value:
     '''read and return user input'''
-    return Value(input())
+    return Value(input_stream.readline()[:-1])
 
 def asdf_add(*args : Value) -> Value:
     '''operation: add'''

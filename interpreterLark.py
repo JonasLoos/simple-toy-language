@@ -9,9 +9,10 @@ author: Jonas Loos (2022)
 # pylint: disable=missing-function-docstring
 # pylint: disable=no-self-use
 
-from typing import Any, Callable
+from typing import Any, Callable, TextIO
 from lark import Token, Tree
 from lark.visitors import Interpreter as LarkInterpreter
+import stdlib
 from stdlib import Object, Value, Function, Fail, std_names
 
 TODO = ...  # placeholder
@@ -25,8 +26,15 @@ class DefinedFunction(Function):
 
 
 
-def interpret(program : Tree) -> None:
+def interpret(program : Tree, input_steam : TextIO = None, output_stream : TextIO = None) -> None:
     '''main entry point - interpret the given program '''
+    # set input and output stream
+    if input_steam:
+        stdlib.input_stream = input_steam
+    if output_stream:
+        stdlib.output_stream = output_stream
+
+    # run program
     main = Interpreter().visit(program)
     main()
 
