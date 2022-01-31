@@ -1,6 +1,6 @@
 def main()
     print('factorial(5) =', factorial(5))
-    ask('what does the fox say?')
+    ask('What does the fox say?')
 
 
 def factorial(n)
@@ -13,13 +13,13 @@ def factorial(n)
 
 def ask(question)
     # ask a hard question
-    print("Please answer the question: {_}")
+    print("Please answer the question: '{_}'")
     l = length(answer = input())
 
     # analyze the answer
     if eq(answer, 'fail')
         some_instruction_that_fails
-    print("Your answer is `{answer}`. It is {_} characters long.")
+    print("Your answer is `{answer}`. It is {l} characters long.")
     if eq(l, 0)
         print('You are a fox!')
     elif lt(l, 12)
