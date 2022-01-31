@@ -1,7 +1,7 @@
 '''
 provide an `interpret` function for interpreting parsed source code.
 It uses the Lark.visitors.Interpreter class as a base and is therefore
-quite concise, but typing support is limited.
+more concise and extensible, but typing support is limited.
 
 author: Jonas Loos (2022)
 '''
@@ -19,21 +19,6 @@ TODO = ...  # placeholder
 
 class DefinedFunction(Function):
     '''Function defined in the source code'''
-    def __init__(self, name : str, args : list[str], run_body : Callable):
-        def fun(names : dict[str, Object], *input_args : Value) -> Object:
-            '''a callable function created from a given body'''
-            # check if the number of given arguments is correct
-            if len(input_args) != len(args):
-                raise Fail(f'wrong number of arguments when calling {name}: expected {len(args)}, got {len(input_args)}')
-            # initialize arguments
-            # only give a copy of `names`, to avoid cluttering the global namespace
-            # set `_` to first argument
-            tmp = names | dict(zip(args, input_args)) | {'_': input_args[0] if len(input_args) > 0 else Value(None)}
-            # run the function
-            return run_body(tmp)
-
-        super().__init__(name, fun)
-
     def __call__(self, names : dict[str, Object], *args : Value) -> Object:
         '''TODO remove if Function is adjusted'''
         return self.fun(names, *args)
@@ -67,8 +52,18 @@ class Interpreter(LarkInterpreter):
         return lambda: main(global_names)
 
     def function_def(self, function_def : Tree) -> tuple[str, DefinedFunction]:
-        name, arguments, run_body = self.visit_children(function_def)
-        return name, DefinedFunction(name, arguments, run_body)
+        name, arg_names, run_body = self.visit_children(function_def)
+        def run_function(names, *args):
+            # check if the number of given arguments is correct
+            n = len(args)
+            if n != len(arg_names):
+                raise Fail(f'wrong number of arguments when calling {name}: expected {len(arg_names)}, got {n}')
+            # initialize arguments
+            # only give a copy of `names`, to avoid cluttering the global namespace
+            # set `_` to first argument
+            tmp = names | dict(zip(arg_names, args)) | {'_': args[0] if n > 0 else Value(None)}
+            return run_body(tmp)
+        return name, DefinedFunction(name, run_function)
 
     def body(self, body : Tree) -> Callable[..., Object]:
         run_stmts = self.visit_children(body)
@@ -133,7 +128,7 @@ class Interpreter(LarkInterpreter):
         name, run_value = self.visit_children(assignment)
         def run_assignment(names : dict[str, Object]) -> Object:
             if name in std_names:
-                raise Fail(f'Cannot overwrite a predefined function or value: {name}', assignment)
+                raise Fail(f'Cannot overwrite a predefined function or value `{name}`', assignment)
             result = names[name] = run_value(names)
             return result
         return run_assignment
@@ -145,7 +140,7 @@ class Interpreter(LarkInterpreter):
             match value.type:
                 case 'NAME':
                     if value not in names:
-                        raise Fail(f'use of undefined name: {value}', value)
+                        raise Fail(f'Use of undefined name `{value}`', value)
                     return names[value]
                 case "STRING":
                     # if it's a format string, format it
