@@ -7,14 +7,14 @@ This is a parser and interpreter for a new simple toy language. It is implemente
 
 usage:
 
-```sh
+```
 python main.py input.asdf
 ```
 
 
 ## Example
 
-```basic
+```
 def main()
     make_greeting('world')
     print(_)
@@ -35,7 +35,7 @@ def make_greeting(x)
 * basic mathematical operations: `add`, `sub`, `mul`, `div`
 * IO operations: `input`, `print`
 * string operations: `length`, `"format string with {variable}."`
-* control-flow statements: `if ...\n ... elif ...\n else ...`
+* control-flow statements: `if ...\n ... elif ...\n else ...` and comparison operators
 * use `_` to get the result of the previous line
 * (sometimes) nice error messages
 
