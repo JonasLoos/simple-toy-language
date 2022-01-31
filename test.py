@@ -7,9 +7,12 @@ author: Jonas Loos (2022)
 # pylint: disable=missing-function-docstring
 
 import unittest
-
+import io
 import subprocess
+import textwrap
 import parser  # pylint: disable=deprecated-module
+import interpreterLark as interpreter
+from stdlib import Fail
 
 
 
@@ -36,6 +39,45 @@ class TestParser(unittest.TestCase):
         with self.assertRaises(parser.ParserError):
             parser.parse('')
 
+    def test_only_comments(self):
+        with self.assertRaises(parser.ParserError):
+            parser.parse('''\
+                # comment
+            ''')
+
+    def test_simple_def(self):
+        try:
+            parser.parse('''\
+                def test()
+                    42
+            ''')
+        except parser.ParserError as err:
+            self.fail(f"test failed: unexpected ParserError: {err}")
+
+
+class TestInterpreter(unittest.TestCase):
+    '''unit-tests for interpreter.py'''
+    def assertOutputEqual(self, program : str, test : str):
+        try:
+            with io.StringIO() as result:
+                interpreter.interpret(parser.parse(textwrap.dedent(program)), output_stream=result)
+                self.assertEqual(result.getvalue(), test)
+        except (parser.ParseError, Fail) as err:
+            self.fail(f"test failed: unexpected Error: {err}")
+
+    def test_print42(self):
+        self.assertOutputEqual('''\
+            def main()
+                print('42')
+        ''', '42\n')
+
+    def test_fun_call(self):
+        self.assertOutputEqual('''\
+            def main()
+                print(f(21))
+            def f(x)
+                mul(x, 2)
+        ''', '42\n')
 
 
 if __name__ == '__main__':
