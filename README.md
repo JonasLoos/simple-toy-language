@@ -12,6 +12,22 @@ python main.py input.asdf
 ```
 
 
+## Example
+
+```basic
+def main()
+    make_greeting('world')
+    print(_)
+
+def make_greeting(x)
+    # greet x
+    if lt(length(x), 42)
+        "hello, {x}!"
+    else
+        "is '{x}' even a name?"
+```
+
+
 ## Features
 
 * functions with a fixed number of arguments: `def name(args...)\n body...`
