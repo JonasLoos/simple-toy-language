@@ -81,25 +81,24 @@ class Fail(Exception):
                 # only continue if valid start- and endpoints were found
                 if all(x is not None for x in [firstline, lastline, firstcolumn, lastcolumn]):
                     indent = '  '
+                    prev_lines = 1
                     # create error message
-                    text = ''
-                    # single line error
-                    if firstline == lastline:
-                        text += f'\nError during execution of line {firstline}:\n\n'
-                        if self.source:
-                            text += indent + f'{firstline:4d} | {self.source[firstline-1]}\n'
+                    text = '\nError during execution:\n\n'
+                    if self.source:
+                        start = max(firstline - prev_lines, 1)
+                        # print lines
+                        for linenumber in range(start, lastline+1):
+                            text += indent + f'{linenumber:4d} | {self.source[linenumber-1]}\n'
+                        # print column indicators
+                        if firstline == lastline:
                             col_err_indent = firstcolumn + 2 + max(4, len(str(firstline)))
                             col_err_len = lastcolumn - firstcolumn
                             text += indent + ' ' * col_err_indent + '^' * col_err_len + '\n\n'
-                    # error over multiple lines
-                    else:
-                        text += f'Error during execution of lines {firstline} - {lastline}:\n\n'
-                        if self.source:
-                            for _ in range(firstline, lastline+1):
-                                text += indent + f'{firstline:4d} | {self.source[firstline]}\n'
-                            text += '\n'
-                    # create the actual exception
+                        text += '\n'
+                    # add error message and line information
                     text += '\n'.join(indent + x for x in msg.split('\n'))
+                    text += ', at line' + (f' {firstline}' if firstline == lastline else f's {firstline}-{lastline}')
+                    # create the actual exception
                     super().__init__(text)
                     return
 
