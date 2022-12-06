@@ -3,7 +3,7 @@
 [![Pylint](https://github.com/JonasLoos/simple-toy-language/workflows/Pylint/badge.svg?branch=main)](https://github.com/JonasLoos/simple-toy-language/actions/workflows/pylint.yml)
 [![Unittest](https://github.com/JonasLoos/simple-toy-language/workflows/Unittest/badge.svg?branch=main)](https://github.com/JonasLoos/simple-toy-language/actions/workflows/unittest.yml)
 
-This is a parser and interpreter for a new simple toy language. It is implemented in Python `3.10` with the help of [lark](https://github.com/lark-parser/lark).
+This is a parser and interpreter for a new simple toy language. It is implemented in Python `3.11` with the help of [lark](https://github.com/lark-parser/lark).
 
 usage:
 

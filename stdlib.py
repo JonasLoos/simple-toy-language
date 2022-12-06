@@ -29,6 +29,9 @@ class Value(Object):
     def __init__(self, value):
         self.value = value
 
+    def __repr__(self):
+        return f'Value({self.value})'
+
     def print(self):
         '''determine how this object should be printed out'''
         return self.value
@@ -40,13 +43,21 @@ class Function(Object):
         self.name = name
         self.fun = fun
 
-    def __call__(self, *args: Value) -> Value:
-        # print('calling function', self.name, 'with', args)
-        return self.fun(*args)
+    def __repr__(self):
+        return f'Function({self.name}, {self.fun})'
+
+    def __call__(self, namespace, *args: Value) -> Value:
+        return self.fun(namespace, *args)
 
     def print(self):
         '''determine how this object should be printed out'''
         return f'<Function {self.name}>'
+
+class StdFunction(Function):
+    '''a function which is part of the standard lib'''
+    def __init__(self, name : str, fun : Callable):
+        # ignore the global namespace of the program, as the standard-lib functions don't need it
+        super().__init__(name, lambda namespace, *args: fun(*args))
 
 
 
@@ -64,7 +75,7 @@ class Fail(Exception):
         '''initialize the Fail class using the source code'''
         cls.source = source_text.split('\n')
 
-    def __init__(self, msg : Any, item : Tree | Token = None):
+    def __init__(self, msg : Any, item : Tree | Token | None = None):
         if item:
             # get first and last token
             first = last = item
@@ -82,7 +93,7 @@ class Fail(Exception):
                 firstcolumn = first.column
                 lastcolumn = last.end_column
                 # only continue if valid start- and endpoints were found
-                if all(x is not None for x in [firstline, lastline, firstcolumn, lastcolumn]):
+                if firstline is not None and lastline is not None and firstcolumn is not None and lastcolumn is not None:
                     indent = '  '
                     prev_lines = 1
                     # create error message
@@ -123,6 +134,7 @@ def asdf_print(*args : Value) -> Value:
 
 def asdf_input() -> Value:
     '''read and return user input'''
+    # ignore the newline symbol at the end
     return Value(input_stream.readline()[:-1])
 
 def asdf_add(*args : Value) -> Value:
@@ -191,7 +203,7 @@ def asdf_leq(a : Value, b : Value) -> Value:
     try:
         return Value(a.value <= b.value)
     except TypeError as err:
-        raise Fail(f'l`leq` between {type(a.value)} and {type(b.value)} is not supported') from err
+        raise Fail(f'`leq` between {type(a.value)} and {type(b.value)} is not supported') from err
 
 def asdf_gt(a : Value, b : Value) -> Value:
     '''comparison: greater than'''
@@ -205,23 +217,23 @@ def asdf_geq(a : Value, b : Value) -> Value:
     try:
         return Value(a.value >= b.value)
     except TypeError as err:
-        raise Fail(f'g`geq` between {type(a.value)} and {type(b.value)} is not supported') from err
+        raise Fail(f'`geq` between {type(a.value)} and {type(b.value)} is not supported') from err
 
 
 
 std_names : dict[str, Object] = {
-    'print': Function('print', asdf_print),
-    'input': Function('input', asdf_input),
-    'add': Function('add', asdf_add),
-    'sub': Function('sub', asdf_sub),
-    'mul': Function('mul', asdf_mul),
-    'div': Function('div', asdf_div),
-    'length': Function('length', asdf_length),
-    'eq': Function('eq', asdf_eq),
-    'lt': Function('lt', asdf_lt),
-    'leq': Function('leq', asdf_leq),
-    'gt': Function('gt', asdf_gt),
-    'geq': Function('geq', asdf_geq),
+    'print': StdFunction('print', asdf_print),
+    'input': StdFunction('input', asdf_input),
+    'add': StdFunction('add', asdf_add),
+    'sub': StdFunction('sub', asdf_sub),
+    'mul': StdFunction('mul', asdf_mul),
+    'div': StdFunction('div', asdf_div),
+    'length': StdFunction('length', asdf_length),
+    'eq': StdFunction('eq', asdf_eq),
+    'lt': StdFunction('lt', asdf_lt),
+    'leq': StdFunction('leq', asdf_leq),
+    'gt': StdFunction('gt', asdf_gt),
+    'geq': StdFunction('geq', asdf_geq),
     'true': Value(True),
     'false': Value(False),
     '_': Value(None),

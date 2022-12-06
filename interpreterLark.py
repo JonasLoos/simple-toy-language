@@ -9,7 +9,7 @@ author: Jonas Loos (2022)
 # pylint: disable=missing-function-docstring
 # pylint: disable=no-self-use
 
-from typing import Any, Callable, TextIO
+from typing import Any, Callable, Optional, TextIO
 from lark import Token, Tree
 from lark.visitors import Interpreter as LarkInterpreter
 import stdlib
@@ -26,7 +26,7 @@ class DefinedFunction(Function):
 
 
 
-def interpret(program : Tree, input_steam : TextIO = None, output_stream : TextIO = None) -> None:
+def interpret(program : Tree, input_steam : Optional[TextIO] = None, output_stream : Optional[TextIO] = None) -> None:
     '''main entry point - interpret the given program '''
     # set input and output stream
     if input_steam:
@@ -39,18 +39,13 @@ def interpret(program : Tree, input_steam : TextIO = None, output_stream : TextI
     main()
 
 
-def wrapStd(f):
-    # wrap stdlib functions to accept `names` parameter. TODO: add this to `stdlib.py` and remove here
-    return Function(f.name, lambda _, *args: f.fun(*args)) if isinstance(f, Function) else f
 
 class Interpreter(LarkInterpreter):
     '''class for interpreting a program'''
 
     def program(self, program : Tree) -> Callable:
-        # wrap stdlib functions to accept `names` parameter. TODO: add this to `stdlib.py` and remove here
-        tmp : dict[str, Object] = {key : wrapStd(f) for key, f in std_names.items()}
         # go through whole program and add global function definitions to global names
-        global_names : dict[str, Object] = tmp | dict(self.visit_children(program))
+        global_names : dict[str, Object] = std_names | dict(self.visit_children(program))
         # run main function
         if 'main' not in global_names:
             raise Fail('main Function not defined')
@@ -117,14 +112,16 @@ class Interpreter(LarkInterpreter):
 
     def funccall(self, funccall : Tree) -> Callable[..., Object]:
         name, arguments = self.visit_children(funccall)
+        assert isinstance(name, Token)
         def run_funccall(names : dict[str, Object]) -> Object:
             if name not in names:
                 raise Fail(f'call of undefined function: {name}', funccall)
             func = names[name]
             if not isinstance(func, Function):
+                # a non-Function object was called
                 raise Fail(f'call of {type(func)} object: {name}', funccall)
             # evaluate arguments
-            args = [x(names) for x in arguments]
+            args = [arg(names) for arg in arguments]
             # call the function
             return func(names, *args)  # TODO: adjust Function class in `stdlib.py`
         return run_funccall

@@ -48,9 +48,7 @@ def parse(input_text : str) -> Tree:
         if hasattr(error, 'column'):
             res += indent + '      ' + ' ' * error.column + '^\n'  # add column indicator
         res += indent + indent.join(str(error).strip().split('\n'))  # add error message
-        # print error
-        # print(res)
-        # sys.exit(1)
+
         raise ParserError(res) from error
         # raise Exception(res + '\n') from error  # use this instead if the traceback should be shown
 
