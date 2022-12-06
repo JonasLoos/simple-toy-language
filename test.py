@@ -58,12 +58,23 @@ class TestParser(unittest.TestCase):
 class TestInterpreter(unittest.TestCase):
     '''unit-tests for interpreter.py'''
     def assertOutputEqual(self, program : str, test : str):
+        '''test if the output when running the `program` is equal to `test`'''
         try:
             with io.StringIO() as result:
                 interpreter.interpret(parser.parse(textwrap.dedent(program)), output_stream=result)
                 self.assertEqual(result.getvalue(), test)
         except (parser.ParseError, Fail) as err:
             self.fail(f"test failed: unexpected Error: {err}")
+
+    def assertFail(self, program, msg : str = ''):
+        '''test if execution of `program` fails and optionally if `msg` is part of the error message'''
+        try:
+            with io.StringIO() as result:
+                interpreter.interpret(parser.parse(textwrap.dedent(program)), output_stream=result)
+                self.fail('test failed: no error was thrown')
+        except Fail as err:
+            if msg:
+                self.assertIn(msg, str(err))
 
     def test_print42(self):
         self.assertOutputEqual('''\
@@ -78,6 +89,27 @@ class TestInterpreter(unittest.TestCase):
             def f(x)
                 mul(x, 2)
         ''', '42\n')
+
+    def test_assignment(self):
+        self.assertOutputEqual('''\
+            def main()
+                x = 42
+                y = x
+                print(y)
+        ''', '42\n')
+
+    def test_format_string(self):
+        self.assertOutputEqual('''\
+            def main()
+                x = 42
+                print("the answer is {x}")
+        ''', 'the answer is 42\n')
+
+    def test_missing_function_def(self):
+        self.assertFail('''\
+            def main()
+                undefinedfun(42)
+        ''', 'call of undefined function')
 
 
 if __name__ == '__main__':
