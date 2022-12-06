@@ -10,7 +10,7 @@ import unittest
 import io
 import subprocess
 import textwrap
-import parser  # pylint: disable=deprecated-module
+from parsing import parse, ParserError  # pylint: disable=deprecated-module
 from interpreter import interpret
 from stdlib import Fail
 
@@ -36,22 +36,22 @@ class TestMain(unittest.TestCase):
 class TestParser(unittest.TestCase):
     '''unit-tests for parser.py'''
     def test_empty(self):
-        with self.assertRaises(parser.ParserError):
-            parser.parse('')
+        with self.assertRaises(ParserError):
+            parse('')
 
     def test_only_comments(self):
-        with self.assertRaises(parser.ParserError):
-            parser.parse('''\
+        with self.assertRaises(ParserError):
+            parse('''\
                 # comment
             ''')
 
     def test_simple_def(self):
         try:
-            parser.parse('''\
+            parse('''\
                 def test()
                     42
             ''')
-        except parser.ParserError as err:
+        except ParserError as err:
             self.fail(f"test failed: unexpected ParserError: {err}")
 
 
@@ -61,16 +61,16 @@ class TestInterpreter(unittest.TestCase):
         '''test if the output when running the `program` is equal to `test`'''
         try:
             with io.StringIO() as result:
-                interpret(parser.parse(textwrap.dedent(program)), output_stream=result)
+                interpret(parse(textwrap.dedent(program)), output_stream=result)
                 self.assertEqual(result.getvalue(), test)
-        except (parser.ParseError, Fail) as err:
+        except (ParserError, Fail) as err:
             self.fail(f"test failed: unexpected Error: {err}")
 
     def assertFail(self, program, msg : str = ''):
         '''test if execution of `program` fails and optionally if `msg` is part of the error message'''
         try:
             with io.StringIO() as result:
-                interpret(parser.parse(textwrap.dedent(program)), output_stream=result)
+                interpret(parse(textwrap.dedent(program)), output_stream=result)
                 self.fail('test failed: no error was thrown')
         except Fail as err:
             if msg:
