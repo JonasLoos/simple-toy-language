@@ -11,7 +11,7 @@ import io
 import subprocess
 import textwrap
 import parser  # pylint: disable=deprecated-module
-import interpreterLark as interpreter
+from interpreter import interpret
 from stdlib import Fail
 
 
@@ -61,7 +61,7 @@ class TestInterpreter(unittest.TestCase):
         '''test if the output when running the `program` is equal to `test`'''
         try:
             with io.StringIO() as result:
-                interpreter.interpret(parser.parse(textwrap.dedent(program)), output_stream=result)
+                interpret(parser.parse(textwrap.dedent(program)), output_stream=result)
                 self.assertEqual(result.getvalue(), test)
         except (parser.ParseError, Fail) as err:
             self.fail(f"test failed: unexpected Error: {err}")
@@ -70,7 +70,7 @@ class TestInterpreter(unittest.TestCase):
         '''test if execution of `program` fails and optionally if `msg` is part of the error message'''
         try:
             with io.StringIO() as result:
-                interpreter.interpret(parser.parse(textwrap.dedent(program)), output_stream=result)
+                interpret(parser.parse(textwrap.dedent(program)), output_stream=result)
                 self.fail('test failed: no error was thrown')
         except Fail as err:
             if msg:
