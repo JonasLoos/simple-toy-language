@@ -7,7 +7,6 @@ author: Jonas Loos (2022)
 '''
 
 # pylint: disable=missing-function-docstring
-# pylint: disable=no-self-use
 
 from typing import Any, Callable, Optional, TextIO
 from lark import Token, Tree
