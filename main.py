@@ -6,7 +6,7 @@ author: Jonas Loos (2022)
 
 import sys
 
-from parsing import ParserError, parse  # pylint: disable=deprecated-module
+from parsing import ParserError, parse
 from stdlib import Fail as InterpreterError
 from interpreter import interpret
 

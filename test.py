@@ -10,7 +10,7 @@ import unittest
 import io
 import subprocess
 import textwrap
-from parsing import parse, ParserError  # pylint: disable=deprecated-module
+from parsing import parse, ParserError
 from interpreter import interpret
 from stdlib import Fail
 
