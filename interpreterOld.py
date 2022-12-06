@@ -1,6 +1,8 @@
 '''
 provide an `interpret` function for interpreting parsed source code.
 
+This file is deprecated in favor of the lark based interpreter.
+
 author: Jonas Loos (2022)
 '''
 
