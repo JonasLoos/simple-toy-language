@@ -16,25 +16,37 @@ from stdlib import Fail
 
 
 
+def run_file(filename : str, input_text : bytes = b''):
+    return subprocess.run(['python', 'main.py', filename], input=input_text, capture_output=True, check=False)
+
+
 class TestMain(unittest.TestCase):
     '''unit-tests for main.py'''
-    @staticmethod
-    def run_main(*args : str):
-        return subprocess.run(['python', 'main.py', *args], capture_output=True, check=False)
 
     def test_no_args(self):
-        result = self.run_main()
+        result = subprocess.run(['python', 'main.py'], capture_output=True, check=False)
         self.assertNotEqual(result.returncode, 0)
-        self.assertEqual(result.stderr.strip(), b'USAGE: main.py FILE')
+        self.assertEqual(result.stderr.strip(), b'USAGE: python main.py FILE')
+
+    def test_many_args(self):
+        result = subprocess.run(['python', 'main.py', 'asdf', 'asdf'], capture_output=True, check=False)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(result.stderr.strip(), b'USAGE: python main.py FILE')
+
+    def test_non_existing_file(self):
+        result = run_file('asdfasdfasdf')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(result.stderr.strip(), b'File not found: asdfasdfasdf')
 
     def test_non_source_code_file(self):
-        result = self.run_main('test.py')
+        result = run_file('test.py')
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(result.stderr.decode()[:5], 'Error')
 
 
 class TestParser(unittest.TestCase):
     '''unit-tests for parser.py'''
+
     def test_empty(self):
         with self.assertRaises(ParserError):
             parse('')
@@ -57,6 +69,7 @@ class TestParser(unittest.TestCase):
 
 class TestInterpreter(unittest.TestCase):
     '''unit-tests for interpreter.py'''
+
     def assertOutputEqual(self, program : str, test : str):
         '''test if the output when running the `program` is equal to `test`'''
         try:
@@ -111,6 +124,38 @@ class TestInterpreter(unittest.TestCase):
                 undefinedfun(42)
         ''', 'call of undefined function')
 
+    def test_while(self):
+        self.assertOutputEqual('''\
+            def main()
+                x = 0
+                while lt(x, 10)
+                    x = add(x, 1)
+                print(x)
+        ''', '10\n')
+
+
+class TestExamles(unittest.TestCase):
+    '''unit-tests for examples'''
+
+    def test_counter(self):
+        result = run_file('examples/counter.asdf')
+        self.assertEqual(result.returncode, 0)
+
+    def test_factorial(self):
+        result = run_file('examples/factorial.asdf', b'10')
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout.strip(), b'factorial(10) = 3628800')
+
+    def test_fox(self):
+        result = run_file('examples/fox.asdf', b'asdf\n')
+        self.assertEqual(result.returncode, 0)
+        print(result.stdout.decode().replace('\r\n','\n'))
+        self.assertEqual(result.stdout.decode().replace('\r\n','\n'), 'Please answer the question: \'What does the fox say?\'\nYour answer is `asdf`. It is 4 characters long.\nThank you for your opinion on that matter.\n')
+
+    def test_greet(self):
+        result = run_file('examples/greet.asdf', b'World\n')
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout.strip()[-13:], b'Hello, World!')
 
 if __name__ == '__main__':
     unittest.main()

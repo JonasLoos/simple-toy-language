@@ -25,8 +25,11 @@ def main() -> None:
         fail(f'USAGE: python {sys.argv[0]} FILE')
 
     # open source code file
-    with open(sys.argv[1], encoding='utf-8') as input_file:
-        input_text = input_file.read()
+    try:
+        with open(sys.argv[1], encoding='utf-8') as input_file:
+            input_text = input_file.read()
+    except FileNotFoundError:
+        fail(f'File not found: {sys.argv[1]}')
 
     # init error class
     InterpreterError.init_class(input_text)

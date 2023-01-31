@@ -108,7 +108,7 @@ class Interpreter(LarkInterpreter):
     def else_stmt(self, else_stmt : Tree) -> Callable[..., Object]:
         tmp = self.visit_children(else_stmt)
         return tmp[0] if tmp else lambda _: Value(None)
-    
+
     def while_stmt(self, while_stmt : Tree) -> Callable[..., Object]:
         condition, body = self.visit_children(while_stmt)
         def run_while(names : dict[str, Object]) -> Object:
