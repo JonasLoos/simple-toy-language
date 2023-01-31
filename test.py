@@ -25,7 +25,7 @@ class TestMain(unittest.TestCase):
     def test_no_args(self):
         result = self.run_main()
         self.assertNotEqual(result.returncode, 0)
-        self.assertEqual(result.stderr, b'USAGE: main.py FILE\n')
+        self.assertEqual(result.stderr.strip(), b'USAGE: main.py FILE')
 
     def test_non_source_code_file(self):
         result = self.run_main('test.py')
