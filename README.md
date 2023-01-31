@@ -8,23 +8,26 @@ This is a parser and interpreter for a new simple toy language. It is implemente
 usage:
 
 ```
-python main.py input.asdf
+python main.py examples/input.asdf
 ```
 
 
 ## Example
 
-```
-def main()
-    make_greeting('world')
-    print(_)
+```rb
+# comments start with `#` and go until the end of the line
+def main()  # the main function is called when the program is run
+    print('what is your name?')  # print a string
+    name = input()  # read a line from stdin and save it in `name`
+    make_greeting(name)  # call a function
+    print(_)  # use `_` to get the result of the previous line
 
-def make_greeting(x)
-    # greet x
-    if lt(length(x), 42)
-        "hello, {x}!"
+def make_greeting(x)  # functions can be defined with `def name(args...)\n body...`
+    if lt(length(x), 42)  # `lt` is less than
+        "Hello, {x}!"  # inside double quotes, variables can be used with `{variable}`
     else
-        "is '{x}' even a name?"
+        'This does not seem like a name.'  # inside single quotes, no variables can be used
+    # the result of the last expression is returned
 ```
 
 

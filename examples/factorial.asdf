@@ -1,0 +1,10 @@
+def main()
+    print('factorial(10) =', factorial(10))
+
+
+def factorial(n)
+    # calculate the factorial of n
+    if lt(n, 2)
+        1
+    else
+        mul(factorial(sub(n,1)), n)
