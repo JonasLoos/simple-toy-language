@@ -9,7 +9,6 @@ from typing import Any, Callable
 from lark.lexer import Token
 from lark.tree import Tree
 
-TODO = ...  # placeholder
 
 # define default input/output streams
 input_stream = sys.stdin

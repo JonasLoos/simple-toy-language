@@ -1,7 +1,7 @@
 '''
 main file of simple-toy-language
 
-author: Jonas Loos (2022)
+author: Jonas Loos (2023)
 '''
 
 import sys

@@ -3,7 +3,7 @@ provide an `interpret` function for interpreting parsed source code.
 It uses the Lark.visitors.Interpreter class as a base and is therefore
 more concise and extensible, but typing support is limited.
 
-author: Jonas Loos (2022)
+author: Jonas Loos (2023)
 '''
 
 # pylint: disable=missing-function-docstring

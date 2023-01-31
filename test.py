@@ -1,7 +1,7 @@
 '''
 do some unit-tests
 
-author: Jonas Loos (2022)
+author: Jonas Loos (2023)
 '''
 
 # pylint: disable=missing-function-docstring
