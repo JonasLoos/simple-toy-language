@@ -17,6 +17,7 @@ python main.py examples/input.asdf
 ```rb
 # comments start with `#` and go until the end of the line
 def main()  # the main function is called when the program is run
+    # indentation matters
     print('what is your name?')  # print a string
     name = input()  # read a line from stdin and save it in `name`
     make_greeting(name)  # call a function
