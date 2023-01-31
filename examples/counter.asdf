@@ -1,0 +1,16 @@
+def main()
+    # examples for while
+
+    i = 0
+    while lt(i, add(4,2))
+        print("current value: {i}")
+        i = add(i,1)
+
+    while geq(_, 0)
+        print("current value: {i}")
+        i = sub(i,1)
+    print("the last while returned `{_}`")
+
+    while false
+        print(123)
+    print("when while doesn't loop, `{_}` is returned")

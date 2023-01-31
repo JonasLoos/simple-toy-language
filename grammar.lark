@@ -12,13 +12,14 @@ function_def: "def" NAME "(" comma_list{NAME} ")" body
 
 // multiline statements
 
-multiline_stmt: do_stmt | if_stmt
+multiline_stmt: do_stmt | if_stmt | while_stmt
 body: _NEWLINE _INDENT stmt+ _DEDENT
 do_stmt: "do" body
 if_stmt: "if" line_stmt body elifs else_stmt
 elifs: elif_stmt*
 elif_stmt: "elif" line_stmt body
 else_stmt: ["else" body]
+while_stmt: "while" line_stmt body
 
 // statements
 

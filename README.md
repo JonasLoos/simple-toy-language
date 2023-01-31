@@ -40,12 +40,12 @@ def make_greeting(x)  # functions can be defined with `def name(args...)\n body.
 * IO operations: `input`, `print`
 * string operations: `length`, `"format string with {variable}."`
 * control-flow statements: `if ...\n ... elif ...\n else ...` and comparison operators
+* while loops: `while ...\n ...`
 * use `_` to get the result of the previous line
 * (sometimes) nice error messages
 
 ### Missing features
 
-* loops
 * arrays
 * lambda functions
 * inline operators
