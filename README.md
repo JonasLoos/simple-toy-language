@@ -52,5 +52,7 @@ The easiest way to get started is to use VS Code with the [Remote - Containers](
 ## How it works
 
 When calling `python main.py input.asdf`, `main.py` checks the arguments, opens the program `input.asdf`, feeds it into the `parse` function from `parsing.py` and the result into the `interpret` function from `interpreter.py`.
+
 In `parse`, the lark earley parser is used with the grammar from `grammar.lark` to turn the program text into a abstract syntax tree (AST).
-This AST is then interpreted by the `interpret` function, i.e. the program is run. The interpreter first first evaluates all function definitions and then executes the `main` function. Thereby, it follows the control flow statements and function calls and evaluates the expressions - all by calling the corresponding functions in the `Interpreter` class from `interpreter.py`.
+
+This AST is then interpreted by the `interpret` function, i.e. the program is run. The interpreter first evaluates all function definitions and then executes the `main` function. Thereby, it follows the control flow statements and function calls and evaluates the expressions - all by calling the corresponding functions of the `Interpreter` class from `interpreter.py`.
