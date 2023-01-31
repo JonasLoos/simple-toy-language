@@ -40,6 +40,8 @@ def main() -> None:
         interpret(parse(input_text))
     except (ParserError, InterpreterError) as error:
         fail(error)
+    except KeyboardInterrupt:
+        fail('KeyboardInterrupt')
 
 
 
