@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "main.py",
-            "args": ["input.asdf"],
+            "args": ["examples/input.asdf"],
             "console": "integratedTerminal"
         }
     ]
