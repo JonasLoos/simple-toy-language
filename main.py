@@ -22,7 +22,7 @@ def main() -> None:
     '''parse and interpret the source code file specified as a command line argument'''
     # check command line args
     if len(sys.argv) != 2:
-        fail(f'USAGE: {sys.argv[0]} FILE')
+        fail(f'USAGE: python {sys.argv[0]} FILE')
 
     # open source code file
     with open(sys.argv[1], encoding='utf-8') as input_file:
